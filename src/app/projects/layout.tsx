@@ -1,5 +1,5 @@
 import type { Metadata } from "next";
-import { ProjectsLayoutContainer } from "./ProjectsLayoutContainer";
+import { ProjectsListContainer } from "./ProjectsListContainer";
 import { getRecentProjects, getTemplates, getUserProjects } from "@/api";
 import { CodeboxLiveProvider } from "@/context-providers";
 
@@ -41,7 +41,7 @@ export default async function ProjectsLayout({
       serverPinnedProjects={[]}
       serverProjectTemplates={projectTemplates}
     >
-      <ProjectsLayoutContainer>{children}</ProjectsLayoutContainer>
+      {children}
     </CodeboxLiveProvider>
   );
 }

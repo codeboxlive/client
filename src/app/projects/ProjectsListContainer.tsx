@@ -6,11 +6,11 @@ import { HomeNavigationBar } from "@/components/navigation-bar/HomeNavigationBar
 import { FrameContexts } from "@microsoft/teams-js";
 import { FC, ReactNode } from "react";
 
-interface IProjectsLayoutContainerProps {
+interface IProjectsListContainerProps {
   children?: ReactNode;
 }
 
-export const ProjectsLayoutContainer: FC<IProjectsLayoutContainerProps> = ({
+export const ProjectsListContainer: FC<IProjectsListContainerProps> = ({
   children,
 }) => {
   const { teamsContext } = useTeamsClientContext();

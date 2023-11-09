@@ -1,5 +1,6 @@
 import { ProjectList } from "@/components/project-list/ProjectList";
 import { Metadata } from "next";
+import { ProjectsListContainer } from "./ProjectsListContainer";
 
 export const metadata: Metadata = {
   title: "Codebox Live",
@@ -7,5 +8,9 @@ export const metadata: Metadata = {
 };
 
 export default function ProjectsHome() {
-  return <ProjectList />;
+  return (
+    <ProjectsListContainer>
+      <ProjectList />
+    </ProjectsListContainer>
+  );
 }
