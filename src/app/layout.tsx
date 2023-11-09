@@ -1,4 +1,3 @@
-import "./globals.css";
 import { RootLayoutContainer } from "./RootLayoutContainer";
 
 export default function RootLayout({
