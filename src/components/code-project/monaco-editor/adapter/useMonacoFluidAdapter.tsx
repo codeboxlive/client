@@ -1,3 +1,5 @@
+"use client"
+
 import { useMonaco } from "@monaco-editor/react";
 import { SequenceDeltaEvent, SharedString } from "fluid-framework";
 import { MergeTreeDeltaType, TextSegment } from "@fluidframework/merge-tree";

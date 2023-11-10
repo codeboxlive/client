@@ -1,3 +1,5 @@
+"use client"
+
 import * as Monaco from "monaco-editor/esm/vs/editor/editor.api";
 import { MutableRefObject, useCallback, useEffect, useRef } from "react";
 import { useFluidObjectsContext } from "../../../../../context-providers";

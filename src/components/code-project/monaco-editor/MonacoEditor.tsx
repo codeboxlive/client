@@ -1,6 +1,7 @@
+"use client"
 import { CSSProperties, FC, memo, useEffect } from "react";
 import { useMonacoFluidAdapter } from "./adapter";
-import { useSandpackIFramePermissions } from "../../../hooks/sandpack/useSandpackIFramePermissions";
+import { useSandpackIFramePermissions } from "@/hooks/sandpack/useSandpackIFramePermissions";
 
 interface IMonacoEditorProps {
   theme: "vs-dark" | "light";
