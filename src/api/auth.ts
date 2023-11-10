@@ -11,5 +11,5 @@ export async function getUserId(): Promise<string> {
 
   const { user } = session;
 
-  return user.sid;
+  return user.sub;
 }
