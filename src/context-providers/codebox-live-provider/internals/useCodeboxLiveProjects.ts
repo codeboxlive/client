@@ -30,14 +30,13 @@ export function useCodeboxLiveProjects(
   const projectsRef = useRef<Map<string, IProject>>(new Map());
   const [userProjectIds, userProjectIdsRef, setUserProjectIds] = useStateRef<
     string[]
-  >([]);
+  >(serverUserProjects.map((project) => project._id));
   const [recentProjectIds, recentProjectIdsRef, setRecentProjectIds] =
-    useStateRef<string[]>([]);
+    useStateRef<string[]>(serverRecentProjects.map((project) => project._id));
   const [pinnedProjectIds, pinnedProjectIdsRef, setPinnedProjectIds] =
-    useStateRef<string[]>([]);
+    useStateRef<string[]>(serverPinnedProjects.map((project) => project._id));
   const [currentProjectId, currentProjectIdRef, setCurrentProjectId] =
     useStateRef<string | undefined>(undefined);
-  const loadingRef = useRef(true);
   const lastViewIdRef = useRef<string>();
   const [error, setError] = useState<Error>();
 
