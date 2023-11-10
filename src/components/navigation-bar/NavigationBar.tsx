@@ -47,7 +47,7 @@ export const NavigationBar: FC<INavigationBarProps> = ({
               <Button
                 appearance="subtle"
                 onClick={() => {
-                  router.push(`/?inTeams=${inTeams()}`);
+                  router.push(`/projects?inTeams=${inTeams()}`);
                 }}
               >
                 {"Codebox Live"}
@@ -58,7 +58,7 @@ export const NavigationBar: FC<INavigationBarProps> = ({
                 icon={<Home28Filled />}
                 appearance="subtle"
                 onClick={() => {
-                  router.push(`/?inTeams=${inTeams()}`);
+                  router.push(`/projects?inTeams=${inTeams()}`);
                 }}
               />
             )}

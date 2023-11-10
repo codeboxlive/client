@@ -10,7 +10,7 @@ export const HomeNavigationBar: FC = () => {
       isL1={true}
       leftActions={
         <TabList selectedValue={pathname}>
-          <Tab value={"/"}>{"Projects"}</Tab>
+          <Tab value={"/projects"}>{"Projects"}</Tab>
         </TabList>
       }
     />
