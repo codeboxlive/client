@@ -29,6 +29,7 @@ export async function postRecentViewedProject(
     id2: body.projectId,
     id2Type: JoinType.ProjectId,
   };
+  console.log("postRecentViewedProject: attempting to post join", join);
   let joins: IJoin[] = await joinCollection.find<IJoin>(join).toArray();
   joins.sort((a, b) => {
     const isAfter = moment(a.date).isBefore(b.date);
