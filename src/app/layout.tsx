@@ -1,11 +1,4 @@
-import dynamic from "next/dynamic";
-// Dynamically import the component that uses the navigator object
-const RootLayoutContainer = dynamic(
-  import("./RootLayoutContainer").then((mod) => mod.RootLayoutContainer),
-  {
-    ssr: false, // Disable server-side rendering
-  }
-);
+import { RootLayoutContainer } from "./RootLayoutContainer";
 
 export default function RootLayout({
   children,

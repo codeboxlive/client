@@ -1,6 +1,6 @@
 "use client";
 
-import { LoadWrapper } from "@/components";
+import { LoadWrapper } from "@/components/view-wrappers";
 
 export default function Loading() {
   // You can add any UI inside Loading, including a Skeleton.

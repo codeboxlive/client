@@ -1,5 +1,4 @@
 import type { Metadata } from "next";
-import { ProjectsListContainer } from "./ProjectsListContainer";
 import { getRecentProjects, getTemplates, getUserProjects } from "@/api";
 import { CodeboxLiveProvider } from "@/context-providers";
 

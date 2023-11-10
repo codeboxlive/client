@@ -1,6 +1,6 @@
 "use client";
 
-import { FlexColumn, FlexRow } from "@/components";
+import { FlexColumn, FlexRow } from "@/components/flex";
 import { useUser } from "@auth0/nextjs-auth0/client";
 import { Button, Subtitle1, Title1 } from "@fluentui/react-components";
 import Link from "next/link";

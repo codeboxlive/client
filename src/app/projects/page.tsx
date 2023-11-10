@@ -1,19 +1,6 @@
 import { Metadata } from "next";
-import dynamic from "next/dynamic";
-
-// Dynamically import the component that uses the navigator object
-const ProjectsListContainer = dynamic(
-  import("./ProjectsListContainer").then((mod) => mod.ProjectsListContainer),
-  {
-    ssr: false, // Disable server-side rendering
-  }
-);
-const ProjectList = dynamic(
-  import("@/components/project-list/ProjectList").then((mod) => mod.ProjectList),
-  {
-    ssr: false, // Disable server-side rendering
-  }
-);
+import { ProjectsListContainer } from "./ProjectsListContainer";
+import { ProjectList } from "@/components/project-list/ProjectList";
 
 export const metadata: Metadata = {
   title: "Codebox Live",

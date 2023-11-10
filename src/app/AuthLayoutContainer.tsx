@@ -1,14 +1,14 @@
 "use client";
 
-import React, { PropsWithChildren } from "react";
+import { FC, PropsWithChildren } from "react";
 import { useUser } from "@auth0/nextjs-auth0/client";
-import { LoadWrapper } from "@/components";
+import { LoadWrapper } from "@/components/view-wrappers";
 
-export const AuthLayoutContainer: React.FC<PropsWithChildren> = ({ children }) => {
+export const AuthLayoutContainer: FC<PropsWithChildren> = ({ children }) => {
   const { isLoading } = useUser();
 
   if (isLoading) {
-    return <LoadWrapper text="Loading..." />;
+    return <LoadWrapper text="Loading user..." />;
   }
 
   return <>{children}</>;

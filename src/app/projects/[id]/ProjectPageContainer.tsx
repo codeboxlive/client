@@ -1,5 +1,5 @@
 "use client";
-import { CodeProject } from "@/components";
+import { CodeProject } from "@/components/code-project";
 import {
   FluidObjectsProvider,
   useCodeboxLiveContext,

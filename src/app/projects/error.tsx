@@ -1,6 +1,6 @@
 "use client"; // Error components must be Client Components
 
-import { FlexColumn } from "@/components";
+import { FlexColumn } from "@/components/flex";
 import { Button, Title1 } from "@fluentui/react-components";
 import { useEffect } from "react";
 

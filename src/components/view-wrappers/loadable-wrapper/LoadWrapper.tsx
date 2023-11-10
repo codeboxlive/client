@@ -1,6 +1,6 @@
 "use client"
 
-import { FlexColumn } from "@/components";
+import { FlexColumn } from "@/components/flex";
 import { Spinner, Text } from "@fluentui/react-components";
 import { FC, PropsWithChildren } from "react";
 
