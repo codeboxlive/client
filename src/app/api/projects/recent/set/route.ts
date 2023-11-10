@@ -1,6 +1,6 @@
 "use server";
 import { NextResponse } from "next/server";
-import { postTeamsPinnedProject } from "@/api";
+import { postRecentViewedProject } from "@/api";
 import { isPostRecentViewedProjectBody } from "@/models";
 
 export async function POST(req: Request) {
@@ -11,6 +11,6 @@ export async function POST(req: Request) {
       "Invalid response type. Please ensure the body adheres to IPostRecentViewedProjectBody interface"
     );
   }
-  await postTeamsPinnedProject(body);
+  await postRecentViewedProject(body);
   return NextResponse.json(body);
 }
