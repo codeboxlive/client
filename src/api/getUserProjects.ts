@@ -9,6 +9,7 @@ import moment from "moment";
 
 export async function getUserProjects(): Promise<IUserProjectsResponse> {
   const userId = await getUserId();
+  console.log("getUserProjects: user", userId, "is getting projects");
   let client: MongoClient;
   try {
     client = await CodeboxMongoClient.getClient();
@@ -38,6 +39,7 @@ export async function getUserProjects(): Promise<IUserProjectsResponse> {
       }
       return -1;
     });
+  console.log("getUserProjects: found", userProjects.length, "projects");
 
   const projectResponse: IUserProjectsResponse = {
     projects: userProjects,

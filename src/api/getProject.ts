@@ -10,6 +10,7 @@ export async function getProject(
   body: IGetProject
 ): Promise<IPostProjectResponse> {
   const userId = await getUserId();
+  console.log("getProject: user", userId, "is getting project");
   let client: MongoClient;
   try {
     client = await CodeboxMongoClient.getClient();
@@ -30,6 +31,7 @@ export async function getProject(
   if (!project) {
     throw new Error("Project not found for id: " + body.projectId);
   }
+  console.log("getUserProjects: found project for id", project._id);
   return {
     project: project,
   };

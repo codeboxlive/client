@@ -9,6 +9,7 @@ import moment from "moment";
 
 export async function getRecentProjects(): Promise<IUserProjectsResponse> {
   const userId = await getUserId();
+  console.log("getRecentProjects: user", userId, "is getting recent projects");
   let client: MongoClient;
   try {
     client = await CodeboxMongoClient.getClient();
@@ -36,6 +37,7 @@ export async function getRecentProjects(): Promise<IUserProjectsResponse> {
     }
     return -1;
   });
+  console.log("getRecentProjects: found", joins.length, "joins");
   const collection = db.collection(PROJECTS_COLLECTION_ID);
   console.log(`getRecentProjects: Using collection:\t${collection.collectionName}\n`);
   // select all that match userId
