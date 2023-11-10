@@ -1,19 +1,8 @@
 "use client";
 
-import { FlexColumn } from "@/components";
-import { Spinner, Text } from "@fluentui/react-components";
+import { LoadWrapper } from "@/components";
 
 export default function Loading() {
   // You can add any UI inside Loading, including a Skeleton.
-  return (
-    <FlexColumn
-      expand="fill"
-      vAlign="center"
-      hAlign="center"
-      marginSpacer="small"
-    >
-      <Spinner />
-      <Text>Loading projects...</Text>
-    </FlexColumn>
-  );
+  return <LoadWrapper text="Loading projects..." />;
 }

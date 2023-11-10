@@ -1,3 +1,5 @@
+"use client"
+
 import { Spinner } from "@fluentui/react-components";
 import { ReactNode, FC } from "react";
 import { FlexColumn } from "../../flex";
@@ -7,7 +9,7 @@ interface IPageWrapperProps {
   loading: boolean;
   error: Error | undefined;
 }
-export const LoadableWrapper: FC<IPageWrapperProps> = (props) => {
+export const LoadErrorWrapper: FC<IPageWrapperProps> = (props) => {
   if (props.error) {
     return (
       <FlexColumn expand="fill" vAlign="center" hAlign="center">

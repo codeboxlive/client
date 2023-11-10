@@ -10,7 +10,7 @@ import {
   useMemo,
   useRef,
 } from "react";
-import { LoadableWrapper } from "../../components/view-wrappers";
+import { LoadErrorWrapper } from "../../components/view-wrappers";
 import { CodeFilesHelper, IFluidObjectsContext } from "../../models";
 import { useTeamsClientContext } from "../teams-client-provider";
 import {
@@ -125,12 +125,12 @@ export const FluidObjectsProvider: FC<{
         onChangeSelectedFile,
       }}
     >
-      <LoadableWrapper
+      <LoadErrorWrapper
         loading={fluidContainerResults.loading}
         error={fluidContainerResults.error}
       >
         {children}
-      </LoadableWrapper>
+      </LoadErrorWrapper>
     </FluidObjectsContext.Provider>
   );
 };

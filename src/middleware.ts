@@ -1,20 +1,7 @@
-import { NextResponse } from "next/server";
-import type { NextRequest } from "next/server";
-import { v4 as uuid } from "uuid";
+import { withMiddlewareAuthRequired } from "@auth0/nextjs-auth0/edge";
 
-export async function middleware(request: NextRequest) {
-  const auth = request.cookies.get("Authorization");
-  let response: NextResponse;
-  
-  if (request.nextUrl.pathname === "/") {
-    return NextResponse.rewrite(new URL("/projects", request.url));
-  } else {
-    response = NextResponse.next();
-  }
+export default withMiddlewareAuthRequired();
 
-  if (!auth) {
-    response.cookies.set("Authorization", `Bearer ${uuid()}`);
-  }
-
-  return response;
-}
+export const config = {
+  matcher: ["/profile", "/projects", "/projects/[id]"],
+};

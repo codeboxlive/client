@@ -1,1 +1,2 @@
-export * from "./loadable-wrapper/LoadableWrapper";
+export * from "./loadable-wrapper/LoadErrorWrapper";
+export * from "./loadable-wrapper/LoadWrapper";

@@ -14,7 +14,7 @@ import {
   useTeamsClientContext,
 } from "../../context-providers";
 import { FlexColumn, FlexItem, FlexRow } from "../flex";
-import { LoadableWrapper } from "../view-wrappers";
+import { LoadErrorWrapper } from "../view-wrappers";
 import { CreateProjectActions } from "../create-project";
 import { ProjectCard } from "./ProjectCard";
 import { ScrollWrapper } from "../scroll-wrapper/ScrollWrapper";
@@ -49,7 +49,7 @@ export const ProjectList: FC<IProjectListProps> = memo(({}) => {
   }, []);
 
   return (
-    <LoadableWrapper loading={false} error={error}>
+    <LoadErrorWrapper loading={false} error={error}>
       <ScrollWrapper>
         <FlexColumn
           marginSpacer="medium"
@@ -139,7 +139,7 @@ export const ProjectList: FC<IProjectListProps> = memo(({}) => {
           )}
         </FlexColumn>
       </ScrollWrapper>
-    </LoadableWrapper>
+    </LoadErrorWrapper>
   );
 });
 ProjectList.displayName = "ProjectList";

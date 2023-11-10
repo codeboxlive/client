@@ -11,7 +11,7 @@ import {
   useState,
 } from "react";
 import { app } from "@microsoft/teams-js";
-import { LoadableWrapper } from "../../components/view-wrappers";
+import { LoadErrorWrapper } from "../../components/view-wrappers";
 import { inTeams } from "../../utils";
 import { Theme } from "@fluentui/react-components";
 import { ITeamsClientContext } from "../../models";
@@ -82,9 +82,9 @@ export const TeamsClientProvider: FC<{
         teamsContext,
       }}
     >
-      <LoadableWrapper loading={isLoading} error={error}>
+      <LoadErrorWrapper loading={isLoading} error={error}>
         {children}
-      </LoadableWrapper>
+      </LoadErrorWrapper>
     </TeamsClientContext.Provider>
   );
 };

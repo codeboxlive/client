@@ -1,12 +1,15 @@
 "use server";
 
-import { cookies } from "next/headers";
+import { Claims, getSession } from "@auth0/nextjs-auth0";
 
 export async function getUserId(): Promise<string> {
-  const cookieStore = cookies();
-  const auth = cookieStore.get("Authorization");
-  if (!auth?.value) {
-    throw new Error("User ID not set. This should not happen. Ensure `authIfNeeded()` is called first.");
+  const session = await getSession();
+
+  if (!session) {
+    throw new Error(`Requires authentication`);
   }
-  return auth.value.replace("Bearer ", "");
+
+  const { user } = session;
+
+  return user.sid;
 }
