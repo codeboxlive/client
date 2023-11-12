@@ -20,7 +20,7 @@ export const RootPageContainer: FC = () => {
     router.push("/projects");
   }, [user, router]);
 
-  if (!isLoading) {
+  if (isLoading) {
     return <LoadWrapper text="Loading..." />;
   }
 
