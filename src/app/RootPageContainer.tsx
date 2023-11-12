@@ -28,9 +28,10 @@ export const RootPageContainer: FC = () => {
 
   const authenticateViaTeams = async (path: string) => {
     try {
-      await authentication.authenticate({
+      const result = await authentication.authenticate({
         url: window.location.origin + path,
       });
+      console.log(result);
     } catch (err: unknown) {
       if (isSdkError(err)) {
         setAuthError(
