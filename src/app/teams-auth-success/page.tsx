@@ -1,4 +1,5 @@
 import { Metadata } from "next";
+import { cookies } from "next/headers";
 import { TeamsAuthSuccessPageContainer } from "./TeamsAuthSuccessPageContainer";
 
 export const metadata: Metadata = {
@@ -7,5 +8,7 @@ export const metadata: Metadata = {
 };
 
 export default function ProjectsHome() {
-  return <TeamsAuthSuccessPageContainer />;
+  const cookieStore = cookies();
+  const appSession = cookieStore.get("appSession")?.value;
+  return <TeamsAuthSuccessPageContainer appSession={appSession} />;
 }
