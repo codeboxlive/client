@@ -1,6 +1,7 @@
 "use client";
 
 import { FlexColumn, FlexRow } from "@/components/flex";
+import { LoadWrapper } from "@/components/view-wrappers";
 import { inTeams, isSdkError } from "@/utils";
 import { useUser } from "@auth0/nextjs-auth0/client";
 import { Button, Subtitle1, Text, Title1 } from "@fluentui/react-components";
@@ -10,7 +11,7 @@ import { FC, useEffect, useState } from "react";
 import { authentication } from "@microsoft/teams-js";
 
 export const RootPageContainer: FC = () => {
-  const { user } = useUser();
+  const { user, isLoading } = useUser();
   const router = useRouter();
   const [authError, setAuthError] = useState<string | undefined>();
 
@@ -18,6 +19,10 @@ export const RootPageContainer: FC = () => {
     if (!user) return;
     router.push("/projects");
   }, [user, router]);
+
+  if (!isLoading) {
+    return <LoadWrapper text="Loading..." />;
+  }
 
   const IN_TEAMS = inTeams();
 
