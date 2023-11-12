@@ -76,7 +76,7 @@ export const RootPageContainer: FC = () => {
                 <Button
                   appearance="outline"
                   onClick={() => {
-                    authenticateViaTeams("/api/auth/signup");
+                    authenticateViaTeams("/api/auth-teams/signup");
                   }}
                 >
                   {"Sign up"}
@@ -84,7 +84,7 @@ export const RootPageContainer: FC = () => {
                 <Button
                   appearance="primary"
                   onClick={() => {
-                    authenticateViaTeams("/api/auth/login");
+                    authenticateViaTeams("/api/auth-teams/login");
                   }}
                 >
                   {"Log in"}
