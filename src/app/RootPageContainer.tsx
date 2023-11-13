@@ -14,10 +14,11 @@ export const RootPageContainer: FC = () => {
   const { user, isLoading } = useUser();
   const router = useRouter();
   const [authError, setAuthError] = useState<string | undefined>();
+  
 
   useEffect(() => {
     if (!user) return;
-    router.push("/projects");
+    router.push(`/projects?inTeams=${inTeams()}`);
   }, [user, router]);
 
   if (isLoading) {
@@ -37,7 +38,7 @@ export const RootPageContainer: FC = () => {
           'Authorization': appSession,
         },
       });
-      router.push("/projects");
+      router.push("/projects?inTeams=true");
     } catch (err: unknown) {
       if (isSdkError(err)) {
         setAuthError(
