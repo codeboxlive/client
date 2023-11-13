@@ -7,6 +7,8 @@ export async function GET(req: Request) {
   }
   return new Response("success", {
     status: 200,
-    headers: { "Set-Cookie": `appSession=${appSession}` },
+    headers: {
+      "Set-Cookie": `appSession=${appSession}; SameSite=None; Secure`,
+    },
   });
 }
