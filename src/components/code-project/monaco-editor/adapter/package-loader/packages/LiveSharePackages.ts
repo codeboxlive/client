@@ -14,11 +14,11 @@ export const LiveSharePackages: ILoadablePackage[] = [
     resolvedPath: "@types/react/jsx-runtime.d.ts",
   },
   {
-    path: "@microsoft/teams-js@2.0.0-experimental.0/dist/MicrosoftTeams.d.ts",
+    path: "@microsoft/teams-js@^2.17.0/dist/MicrosoftTeams.d.ts",
     resolvedPath: "@microsoft/teams-js/index.d.ts",
   },
   {
-    path: "@microsoft/live-share@~0.3.1/bin/index.d.ts",
+    path: "@microsoft/live-share@^1.2.2/bin/index.d.ts",
     resolvedPath: "@microsoft/live-share/index.d.ts",
   },
 ];
