@@ -1,4 +1,4 @@
-'use client'
+"use client";
 
 import { FrameContexts } from "@microsoft/teams-js";
 import { FC, ReactNode } from "react";
@@ -7,7 +7,10 @@ import { FlexRow } from "../flex";
 import { useRouter } from "next/navigation";
 import { Home28Filled } from "@fluentui/react-icons";
 import { Button, tokens } from "@fluentui/react-components";
-import { useTeamsClientContext } from "../../context-providers";
+import {
+  useCodeboxLiveContext,
+  useTeamsClientContext,
+} from "../../context-providers";
 
 interface INavigationBarProps {
   isL1: boolean;
@@ -20,6 +23,7 @@ export const NavigationBar: FC<INavigationBarProps> = ({
   leftActions,
   rightActions,
 }) => {
+  const { setCurrentProjectId } = useCodeboxLiveContext();
   const { teamsContext } = useTeamsClientContext();
   const router = useRouter();
   return (
@@ -58,6 +62,7 @@ export const NavigationBar: FC<INavigationBarProps> = ({
                 icon={<Home28Filled />}
                 appearance="subtle"
                 onClick={() => {
+                  setCurrentProjectId(undefined);
                   router.push(`/projects?inTeams=${inTeams()}`);
                 }}
               />
