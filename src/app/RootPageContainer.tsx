@@ -36,12 +36,12 @@ export const RootPageContainer: FC = () => {
       const appSession = await authentication.authenticate({
         url: window.location.origin + path,
       });
-      await fetch("/api/auth-set-session", {
-        method: "GET",
-        headers: {
-          'Authorization': appSession,
-        },
-      });
+      // await fetch("/api/auth-set-session", {
+      //   method: "GET",
+      //   headers: {
+      //     'Authorization': appSession,
+      //   },
+      // });
       router.push("/projects?inTeams=true");
     } catch (err: unknown) {
       if (isSdkError(err)) {
