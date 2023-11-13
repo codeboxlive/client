@@ -11,8 +11,8 @@
   "dependencies": {
     "@auth0/nextjs-auth0": "^3.2.0",
     "@azure/storage-blob": "^12.11.0",
-    "@codeboxlive/hub-interfaces": "^0.3.3",
-    "@codeboxlive/uncle": "^0.3.3",
+    "@codeboxlive/hub-interfaces": "^0.4.1",
+    "@codeboxlive/uncle": "^0.4.1",
     "@codesandbox/sandpack-react": "1.5.1",
     "@fluentui/react-components": "^9.7.4",
     "@fluidframework/azure-client": "^1.1.1",

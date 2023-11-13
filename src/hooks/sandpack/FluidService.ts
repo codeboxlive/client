@@ -9,6 +9,7 @@ import {
   IUserRolesMessageBody,
   IRegisterClientIdInfo,
   IFluidRequests,
+  IClientInfo,
   UserRole,
   ContainerState,
 } from "@codeboxlive/hub-interfaces";
@@ -44,6 +45,7 @@ export class FluidService {
       getNtpTime: this.getNtpTime.bind(this),
       registerClientId: this.registerClientId.bind(this),
       getUserRoles: this.getUserRoles.bind(this),
+      getClientInfo: this.getClientInfo.bind(this),
     };
   }
 
@@ -181,6 +183,18 @@ export class FluidService {
         UserRole.attendee,
         UserRole.guest,
       ],
+    });
+  }
+  async getClientInfo(body: IUserRolesMessageBody): Promise<IClientInfo | undefined> {
+    return Promise.resolve({
+      userId: body.clientId,
+      roles: [
+        UserRole.organizer,
+        UserRole.presenter,
+        UserRole.attendee,
+        UserRole.guest,
+      ],
+      displayName: "Guest",
     });
   }
 }
