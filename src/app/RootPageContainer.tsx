@@ -22,7 +22,11 @@ export const RootPageContainer: FC = () => {
   }, [user, router]);
 
   if (isLoading) {
-    return <LoadWrapper text="Loading..." />;
+    return <LoadWrapper text="Attempting to log in..." />;
+  }
+
+  if (user) {
+    return <LoadWrapper text={`Hello ${user.name ?? "friend"}! Redirecting to projects...`} />;
   }
 
   const IN_TEAMS = inTeams();
