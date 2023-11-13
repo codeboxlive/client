@@ -5,10 +5,6 @@ export const metadata: Metadata = {
   description: "Collaborative code sandbox for building Teams apps",
 };
 
-export default function ProjectsHome() {
-  return (
-    <div>
-      <RootPageContainer />
-    </div>
-  );
+export default function RootPage() {
+  return <RootPageContainer />;
 }
