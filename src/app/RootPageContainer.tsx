@@ -28,10 +28,16 @@ export const RootPageContainer: FC = () => {
 
   const authenticateViaTeams = async (path: string) => {
     try {
-      const result = await authentication.authenticate({
+      const appSession = await authentication.authenticate({
         url: window.location.origin + path,
       });
-      console.log(result);
+      await fetch("/api/auth-set-session", {
+        method: "GET",
+        headers: {
+          'Authorization': appSession,
+        },
+      });
+      router.push("/projects");
     } catch (err: unknown) {
       if (isSdkError(err)) {
         setAuthError(
