@@ -14,7 +14,6 @@ export const RootPageContainer: FC = () => {
   const { user, isLoading } = useUser();
   const router = useRouter();
   const [authError, setAuthError] = useState<string | undefined>();
-  
 
   useEffect(() => {
     if (!user) return;
@@ -26,22 +25,20 @@ export const RootPageContainer: FC = () => {
   }
 
   if (user) {
-    return <LoadWrapper text={`Hello ${user.name ?? "friend"}! Redirecting to projects...`} />;
+    return (
+      <LoadWrapper
+        text={`Welcome back! Loading projects...`}
+      />
+    );
   }
 
   const IN_TEAMS = inTeams();
 
-  const authenticateViaTeams = async (path: string) => {
+  const authenticateViaTeams = async (path: "signup" | "login") => {
     try {
-      const appSession = await authentication.authenticate({
-        url: window.location.origin + path,
+      await authentication.authenticate({
+        url: window.location.origin + "/api/auth-teams/" + path,
       });
-      // await fetch("/api/auth-set-session", {
-      //   method: "GET",
-      //   headers: {
-      //     'Authorization': appSession,
-      //   },
-      // });
       router.push("/projects?inTeams=true");
     } catch (err: unknown) {
       if (isSdkError(err)) {
@@ -87,7 +84,7 @@ export const RootPageContainer: FC = () => {
                 <Button
                   appearance="outline"
                   onClick={() => {
-                    authenticateViaTeams("/api/auth-teams/signup");
+                    authenticateViaTeams("signup");
                   }}
                 >
                   {"Sign up"}
@@ -95,7 +92,7 @@ export const RootPageContainer: FC = () => {
                 <Button
                   appearance="primary"
                   onClick={() => {
-                    authenticateViaTeams("/api/auth-teams/login");
+                    authenticateViaTeams("login");
                   }}
                 >
                   {"Log in"}

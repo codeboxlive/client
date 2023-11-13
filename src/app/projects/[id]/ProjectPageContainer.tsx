@@ -15,7 +15,6 @@ export const ProjectPageContainer: FC<IProjectPageContainerProps> = ({
 }) => {
   const { setCurrentProjectId } = useCodeboxLiveContext();
   useEffect(() => {
-    console.log("setting current project id", projectId);
     setCurrentProjectId(projectId);
   }, [projectId, setCurrentProjectId]);
   return (
