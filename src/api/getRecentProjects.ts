@@ -1,14 +1,12 @@
 "use server";
 
 import { MongoClient, ObjectId } from "mongodb";
-import { getUserId } from ".";
 import { CodeboxMongoClient } from "./internal";
 import { IJoin, IProject, IUserProjectsResponse, JoinType } from "@/models";
 import { JOIN_COLLECTION_ID, PROJECTS_COLLECTION_ID } from "@/constants";
 import moment from "moment";
 
-export async function getRecentProjects(): Promise<IUserProjectsResponse> {
-  const userId = await getUserId();
+export async function getRecentProjects(userId: string): Promise<IUserProjectsResponse> {
   console.log("getRecentProjects: user", userId, "is getting recent projects");
   let client: MongoClient;
   try {

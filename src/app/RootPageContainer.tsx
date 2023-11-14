@@ -10,26 +10,33 @@ import { useRouter } from "next/navigation";
 import { FC, useEffect, useState } from "react";
 import { authentication } from "@microsoft/teams-js";
 
-export const RootPageContainer: FC = () => {
+interface IRootPageProps {
+  /**
+   * Redirect to path to override. If not set, uses current path.
+   */
+  redirectTo?: string;
+}
+
+export const RootPageContainer: FC<IRootPageProps> = ({ redirectTo }) => {
   const { user, isLoading } = useUser();
   const router = useRouter();
   const [authError, setAuthError] = useState<string | undefined>();
 
   useEffect(() => {
     if (!user) return;
-    router.push(`/projects?inTeams=${inTeams()}`);
-  }, [user, router]);
+    router.push(
+      `${
+        redirectTo ?? window.location.pathname + window.location.search
+      }?inTeams=${inTeams()}`
+    );
+  }, [user, router, redirectTo]);
 
   if (isLoading) {
     return <LoadWrapper text="Attempting to log in..." />;
   }
 
   if (user) {
-    return (
-      <LoadWrapper
-        text={`Welcome back! Loading projects...`}
-      />
-    );
+    return <LoadWrapper text={`Welcome back! Loading projects...`} />;
   }
 
   const IN_TEAMS = inTeams();
@@ -39,7 +46,7 @@ export const RootPageContainer: FC = () => {
       await authentication.authenticate({
         url: window.location.origin + "/api/auth-teams/" + path,
       });
-      router.push("/projects?inTeams=true");
+      router.push(`${redirectTo}?inTeams=true`);
     } catch (err: unknown) {
       if (isSdkError(err)) {
         setAuthError(

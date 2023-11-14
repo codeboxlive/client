@@ -6,10 +6,16 @@ export async function getUserId(): Promise<string> {
   const session = await getSession();
 
   if (!session) {
-    throw new Error(`Requires authentication`);
+    throw new RequiresAuthError();
   }
 
   const { user } = session;
 
   return user.sub;
+}
+
+export class RequiresAuthError extends Error {
+  constructor() {
+    super("Authentication required");
+  }
 }

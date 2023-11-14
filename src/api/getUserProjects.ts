@@ -7,8 +7,7 @@ import { IProject, IUserProjectsResponse } from "@/models";
 import { PROJECTS_COLLECTION_ID } from "@/constants";
 import moment from "moment";
 
-export async function getUserProjects(): Promise<IUserProjectsResponse> {
-  const userId = await getUserId();
+export async function getUserProjects(userId: string): Promise<IUserProjectsResponse> {
   console.log("getUserProjects: user", userId, "is getting projects");
   let client: MongoClient;
   try {

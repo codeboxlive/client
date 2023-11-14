@@ -1,6 +1,13 @@
 import type { Metadata } from "next";
-import { getRecentProjects, getTemplates, getUserProjects } from "@/api";
+import {
+  RequiresAuthError,
+  getRecentProjects,
+  getTemplates,
+  getUserId,
+  getUserProjects,
+} from "@/api";
 import { CodeboxLiveProvider } from "@/context-providers";
+import { RootPageContainer } from "../RootPageContainer";
 
 export const metadata: Metadata = {
   title: "Codebox Live - Projects",
@@ -8,14 +15,15 @@ export const metadata: Metadata = {
 };
 
 async function getData() {
-    const userProjects = await getUserProjects();
-    const recentProjects = await getRecentProjects();
-    const projectTemplates = await getTemplates();
-    return {
-        userProjects,
-        recentProjects,
-        projectTemplates,
-    }
+  const userId = await getUserId();
+  const userProjects = await getUserProjects(userId);
+  const recentProjects = await getRecentProjects(userId);
+  const projectTemplates = await getTemplates(userId);
+  return {
+    userProjects,
+    recentProjects,
+    projectTemplates,
+  };
 }
 
 export default async function ProjectsLayout({
@@ -23,24 +31,22 @@ export default async function ProjectsLayout({
 }: {
   children: React.ReactNode;
 }) {
-  const {
-    userProjects,
-    recentProjects,
-    projectTemplates
-  } = await getData();
-//   const [userProjects, recentProjects, projectTemplates] = await Promise.all([
-//     userProjectsResponsePromise,
-//     recentProjectsResponsePromise,
-//     templatesPromise,
-//   ]);
-  return (
-    <CodeboxLiveProvider
-      serverUserProjects={userProjects.projects}
-      serverRecentProjects={recentProjects.projects}
-      serverPinnedProjects={[]}
-      serverProjectTemplates={projectTemplates}
-    >
-      {children}
-    </CodeboxLiveProvider>
-  );
+  try {
+    const { userProjects, recentProjects, projectTemplates } = await getData();
+    return (
+      <CodeboxLiveProvider
+        serverUserProjects={userProjects.projects}
+        serverRecentProjects={recentProjects.projects}
+        serverPinnedProjects={[]}
+        serverProjectTemplates={projectTemplates}
+      >
+        {children}
+      </CodeboxLiveProvider>
+    );
+  } catch (error: unknown) {
+    if (error instanceof RequiresAuthError) {
+      return <RootPageContainer />;
+    }
+    throw error;
+  }
 }
