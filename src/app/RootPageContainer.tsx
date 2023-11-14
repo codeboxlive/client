@@ -40,13 +40,14 @@ export const RootPageContainer: FC<IRootPageProps> = ({ redirectTo }) => {
   }
 
   const IN_TEAMS = inTeams();
+  const defaultRedirectTo = window.location.pathname + window.location.search;
 
   const authenticateViaTeams = async (path: "signup" | "login") => {
     try {
       await authentication.authenticate({
         url: window.location.origin + "/api/auth-teams/" + path,
       });
-      router.push(`${redirectTo}?inTeams=true`);
+      router.push(`${redirectTo ?? defaultRedirectTo}?inTeams=true`);
     } catch (err: unknown) {
       if (isSdkError(err)) {
         setAuthError(
@@ -78,10 +79,18 @@ export const RootPageContainer: FC<IRootPageProps> = ({ redirectTo }) => {
           <FlexRow marginSpacer="small">
             {!IN_TEAMS && (
               <>
-                <Link href="/api/auth/signup">
+                <Link
+                  href={`/api/auth/signup?redirectTo=${
+                    redirectTo ?? defaultRedirectTo
+                  }`}
+                >
                   <Button appearance="outline">{"Sign up"}</Button>
                 </Link>
-                <Link href="/api/auth/login">
+                <Link
+                  href={`/api/auth/login?redirectTo=${
+                    redirectTo ?? defaultRedirectTo
+                  }`}
+                >
                   <Button appearance="primary">{"Log in"}</Button>
                 </Link>
               </>
