@@ -29,6 +29,7 @@ export const ShareMenu: FC<IShareMenuProps> = ({ project }) => {
   const onCopyLink = useCallback(async () => {
     const url = `${window.location.origin}/projects/${project._id}`;
     if (inTeams()) {
+      // In Teams, we try to use the dedicated clipboard API
       try {
         const isSupported = clipboard.isSupported();
         if (isSupported) {
