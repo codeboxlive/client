@@ -7,6 +7,7 @@ import { inTeams } from "@/utils";
 
 export const HomeNavigationBar: FC = () => {
   const pathname = usePathname();
+  const IN_TEAMS = inTeams();
   return (
     <NavigationBar
       isL1={true}
@@ -16,7 +17,11 @@ export const HomeNavigationBar: FC = () => {
         </TabList>
       }
       rightActions={
-        <Link href={`/api/auth/logout?returnTo=/?inTeams=${inTeams()}`}>
+        <Link
+          href={`/api/${
+            IN_TEAMS ? "auth-teams" : "auth"
+          }/logout?returnTo=/?inTeams=${IN_TEAMS}`}
+        >
           <Button size="small" appearance="subtle">
             {"Log out"}
           </Button>
