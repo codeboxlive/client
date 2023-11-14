@@ -1,6 +1,5 @@
 import type { Metadata } from "next";
 import {
-  RequiresAuthError,
   getRecentProjects,
   getTemplates,
   getUserId,
@@ -8,6 +7,7 @@ import {
 } from "@/api";
 import { CodeboxLiveProvider } from "@/context-providers";
 import { RootPageContainer } from "../RootPageContainer";
+import { RequiresAuthError } from "@/models/errors";
 
 export const metadata: Metadata = {
   title: "Codebox Live - Projects",
