@@ -80,14 +80,14 @@ export const RootPageContainer: FC<IRootPageProps> = ({ redirectTo }) => {
             {!IN_TEAMS && (
               <>
                 <Link
-                  href={`/api/auth/signup?redirectTo=${
+                  href={`/api/auth/signup?returnTo=${
                     redirectTo ?? defaultRedirectTo
                   }`}
                 >
                   <Button appearance="outline">{"Sign up"}</Button>
                 </Link>
                 <Link
-                  href={`/api/auth/login?redirectTo=${
+                  href={`/api/auth/login?returnTo=${
                     redirectTo ?? defaultRedirectTo
                   }`}
                 >
