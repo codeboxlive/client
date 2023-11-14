@@ -14,7 +14,7 @@ import {
   Clipboard20Regular,
   Chat20Regular,
 } from "@fluentui/react-icons";
-import { FrameContexts } from "@microsoft/teams-js";
+import { clipboard, FrameContexts } from "@microsoft/teams-js";
 import { FC, useCallback } from "react";
 import { useTeamsClientContext } from "../../context-providers";
 import { IProject } from "../../models";
@@ -28,6 +28,24 @@ export const ShareMenu: FC<IShareMenuProps> = ({ project }) => {
   const { teamsContext } = useTeamsClientContext();
   const onCopyLink = useCallback(async () => {
     const url = `${window.location.origin}/projects/${project._id}`;
+    if (inTeams()) {
+      try {
+        const isSupported = clipboard.isSupported();
+        if (isSupported) {
+          const blob = new Blob([url], {
+            type: "text/plain",
+          });
+          await clipboard.write(blob);
+          return;
+        }
+      } catch (error: unknown) {
+        if (error instanceof Error) {
+          console.error(error);
+        } else {
+          console.error(JSON.stringify(error));
+        }
+      }
+    }
     if (navigator.clipboard) {
       // For older browsers (including T1), this is used instead, but won't work in newer browsers that have deprecated execCommand
       const legacyBrowserCopyToClipboard = () => {
