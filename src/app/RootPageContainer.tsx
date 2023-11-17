@@ -7,7 +7,7 @@ import { useUser } from "@auth0/nextjs-auth0/client";
 import { Button, Subtitle1, Text, Title1 } from "@fluentui/react-components";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
-import { FC, useEffect, useState } from "react";
+import { FC, useCallback, useEffect, useState } from "react";
 import { authentication } from "@microsoft/teams-js";
 
 interface IRootPageProps {
@@ -21,6 +21,38 @@ export const RootPageContainer: FC<IRootPageProps> = ({ redirectTo }) => {
   const { user, isLoading } = useUser();
   const router = useRouter();
   const [authError, setAuthError] = useState<string | undefined>();
+  const [awaitingSilentAuth, setAwaitingSilentAuth] = useState(inTeams());
+
+  const setUnknownAuthError = useCallback(
+    (err: unknown) => {
+      if (isSdkError(err)) {
+        setAuthError(
+          `[${err.errorCode}] ${err.message ?? "An unknown error occurred"}`
+        );
+      } else if (err instanceof Error) {
+        setAuthError(err.message);
+      } else if (typeof err === "string") {
+        setAuthError(err);
+      } else {
+        setAuthError("An unknown error occurred");
+      }
+    },
+    [setAuthError]
+  );
+
+  const authenticateWithTeamsSSO = useCallback(
+    async (silent: boolean) => {
+      try {
+        const token = await authentication.getAuthToken({
+          silent,
+        });
+        console.log(token);
+      } catch (err: unknown) {
+        setUnknownAuthError(err);
+      }
+    },
+    [setUnknownAuthError]
+  );
 
   useEffect(() => {
     if (!user) return;
@@ -31,8 +63,30 @@ export const RootPageContainer: FC<IRootPageProps> = ({ redirectTo }) => {
     );
   }, [user, router, redirectTo]);
 
+  useEffect(() => {
+    if (isLoading) return;
+    if (!inTeams()) return;
+    authenticateWithTeamsSSO(true)
+      .then((token) => {
+        console.log("silent token", token);
+        // TODO: authenticate using token
+      })
+      .catch((err) => {
+        console.error(err);
+      })
+      .finally(() => {
+        setAwaitingSilentAuth(false);
+      });
+  }, [isLoading, authenticateWithTeamsSSO, setAwaitingSilentAuth]);
+
   if (isLoading) {
     return <LoadWrapper text="Attempting to log in..." />;
+  }
+
+  if (awaitingSilentAuth) {
+    return (
+      <LoadWrapper text="Attempting to log in with Microsoft EntraID..." />
+    );
   }
 
   if (user) {
@@ -49,17 +103,7 @@ export const RootPageContainer: FC<IRootPageProps> = ({ redirectTo }) => {
       });
       router.push(`${redirectTo ?? defaultRedirectTo}?inTeams=true`);
     } catch (err: unknown) {
-      if (isSdkError(err)) {
-        setAuthError(
-          `[${err.errorCode}] ${err.message ?? "An unknown error occurred"}`
-        );
-      } else if (err instanceof Error) {
-        setAuthError(err.message);
-      } else if (typeof err === "string") {
-        setAuthError(err);
-      } else {
-        setAuthError("An unknown error occurred");
-      }
+      setUnknownAuthError(err);
     }
   };
 
@@ -112,6 +156,14 @@ export const RootPageContainer: FC<IRootPageProps> = ({ redirectTo }) => {
                   }}
                 >
                   {"Log in"}
+                </Button>
+                <Button
+                  appearance="primary"
+                  onClick={() => {
+                    authenticateWithTeamsSSO(false);
+                  }}
+                >
+                  {"Log in with Microsoft"}
                 </Button>
               </>
             )}

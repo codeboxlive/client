@@ -24,6 +24,10 @@
     "color": "color.png"
   },
   "accentColor": "#38a2ff",
+  "webApplicationInfo": {
+    "id": "3e2417b8-9b4a-46ea-9032-f3bdc0e053ba",
+    "resource": "api://codebox.live/ffb8bede-d6d3-4fc1-8f2f-d7d7861c8f1a"
+  },
   "configurableTabs": [
     {
       "configurationUrl": "https://www.codebox.live/teams-settings?inTeams=true",
@@ -50,10 +54,7 @@
       "searchUrl": "https://www.codebox.live?inTeams=false"
     }
   ],
-  "validDomains": [
-    "codebox.live",
-    "dev-xjg1z4w6oz8w12zs.us.auth0.com"
-  ],
+  "validDomains": ["codebox.live", "dev-xjg1z4w6oz8w12zs.us.auth0.com"],
   "showLoadingIndicator": true,
   "authorization": {
     "permissions": {
