@@ -1,6 +1,6 @@
 import type { NextApiRequest, NextApiResponse } from 'next';
 
-export default async function exchangeToken(req: NextApiRequest, res: NextApiResponse) {
+export const GET = (req: NextApiRequest, res: NextApiResponse) => {
     const { authorization } = req.headers;
     if (!authorization) {
         res.status(500).json({ error: "Invalid headers. Please include an Authorization header with a Teams auth token."});
