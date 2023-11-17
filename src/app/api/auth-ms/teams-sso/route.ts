@@ -1,17 +1,26 @@
-import type { NextApiRequest, NextApiResponse } from 'next';
+import { NextResponse } from "next/server";
 
-export const GET = (req: NextApiRequest, res: NextApiResponse) => {
-    const { authorization } = req.headers;
-    if (!authorization) {
-        res.status(500).json({ error: "Invalid headers. Please include an Authorization header with a Teams auth token."});
-        return res;
-    }
+export const GET = (req: Request) => {
+  const authorization = req.headers.get("Authorization");
+  if (!authorization) {
+    return NextResponse.json(
+      {
+        error:
+          "Invalid headers. Please include an Authorization header with a Teams auth token.",
+      },
+      { status: 500 }
+    );
+  }
 
-    try {
-        throw new Error("Not implemented exception");
-    } catch (error) {
-        res.status(500).json({ error: 'Token exchange failed' });
-    }
-
-    return res;
-}
+  try {
+    throw new Error("Not implemented exception");
+  } catch (error) {
+    return NextResponse.json(
+        {
+          error:
+            "Token exchange failed.",
+        },
+        { status: 500 }
+      );
+  }
+};
