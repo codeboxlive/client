@@ -1,6 +1,7 @@
+import validateTeamsToken from "@/api/validateTeamsToken";
 import { NextResponse } from "next/server";
 
-export const GET = (req: Request) => {
+export const GET = async (req: Request) => {
   const authorization = req.headers.get("Authorization");
   if (!authorization) {
     return NextResponse.json(
@@ -13,7 +14,12 @@ export const GET = (req: Request) => {
   }
 
   try {
-    throw new Error("Not implemented exception");
+    const decoded = await validateTeamsToken(
+      authorization.replace("Bearer ", "")
+    );
+    NextResponse.json(decoded, {
+      status: 200,
+    });
   } catch (error) {
     return NextResponse.json(
       {

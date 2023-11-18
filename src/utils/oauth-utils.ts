@@ -12,6 +12,6 @@ export function isOAuthValidCode(code: string): boolean {
     if (check === undefined || check === true) {
         return false;
     }
-    codeMap.set(code, true);
+    codeMap.delete(code);
     return true;
 }

@@ -46,7 +46,13 @@ export const RootPageContainer: FC<IRootPageProps> = ({ redirectTo }) => {
         const token = await authentication.getAuthToken({
           silent,
         });
-        console.log(token);
+        const response = await fetch("/api/auth-ms/teams-sso", {
+          headers: {
+            "Authorization": `Bearer ${token}`,
+          }
+        });
+        const json = await response.json();
+        console.log(json);
       } catch (err: unknown) {
         setUnknownAuthError(err);
       }
