@@ -45,11 +45,12 @@ export const RootPageContainer: FC<IRootPageProps> = ({ redirectTo }) => {
   const authenticateViaTeams = useCallback(
     async (path: "signup" | "login", connection?: "Microsoft-365-Tab-SSO") => {
       try {
+        const url = new URL(window.location.origin + "/api/auth-teams/" + path);
+        if (connection) {
+          url.searchParams.set("connection", connection);
+        }
         await authentication.authenticate({
-          url:
-            window.location.origin + "/api/auth-teams/" + path + connection
-              ? `?connection=${connection}`
-              : "",
+          url: url.href,
         });
         router.push(`${redirectTo ?? defaultRedirectTo}?inTeams=true`);
       } catch (err: unknown) {

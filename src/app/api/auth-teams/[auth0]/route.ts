@@ -4,8 +4,7 @@ export const GET = handleAuth({
   login: handleLogin((req) => {
     const url = new URL(req.url!);
     return {
-      returnTo:
-        url.searchParams.get("returnTo") ?? "/teams-auth-success?inTeams=true",
+      returnTo: "/teams-auth-success?inTeams=true",
       authorizationParams: {
         connection: url.searchParams.get("connection") ?? undefined,
       },
@@ -18,8 +17,7 @@ export const GET = handleAuth({
         screen_hint: "signup",
         connection: url.searchParams.get("connection") ?? undefined,
       },
-      returnTo:
-        url.searchParams.get("returnTo") ?? "/teams-auth-success?inTeams=true",
+      returnTo: "/teams-auth-success?inTeams=true",
     };
   }),
   logout: handleLogout({
