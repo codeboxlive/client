@@ -1,6 +1,7 @@
 import { NextResponse } from "next/server";
 
 export const GET = (req: Request) => {
+  console.log("attempting to get profile");
   const authHeader = req.headers.get("Authorization");
   if (!authHeader) {
     return NextResponse.json(
@@ -14,14 +15,10 @@ export const GET = (req: Request) => {
   // TODO: get microsoft profile
   return NextResponse.json(
     {
-      user_id: "fakeId",
+      sub: "fakeId",
       email: "xxblissfitxx@gmail.com",
       name: "Ryan Test",
-      app_metadata: {
-        _m366_tab: {
-          tid: "fakeTenantId",
-        },
-      },
+      tid: "fakeTenantId",
     },
     { status: 200 }
   );
