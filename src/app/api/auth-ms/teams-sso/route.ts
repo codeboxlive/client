@@ -16,11 +16,10 @@ export const GET = (req: Request) => {
     throw new Error("Not implemented exception");
   } catch (error) {
     return NextResponse.json(
-        {
-          error:
-            "Token exchange failed.",
-        },
-        { status: 500 }
-      );
+      {
+        error: "Token exchange failed.",
+      },
+      { status: 500 }
+    );
   }
 };
