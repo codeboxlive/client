@@ -1,8 +1,6 @@
-import validateTeamsToken from "@/api/validateTeamsToken";
-import { isOAuthValidCode } from "@/utils/oauth-utils";
+import { IOAuthCodeData, getTokenForCode } from "@/utils/oauth-utils";
 import { NextResponse, NextRequest } from "next/server";
 import { msalClient } from "@/api/msal-client";
-import { JwtPayload } from "jsonwebtoken";
 
 export const POST = async (req: NextRequest) => {
   console.log("m365-tab/token: attempting to get token");
@@ -54,49 +52,13 @@ export const POST = async (req: NextRequest) => {
       { status: 401 }
     );
   }
-  const authorization = req.cookies.get("TeamsAuthorization");
-  if (!authorization?.value) {
-    return NextResponse.json(
-      {
-        error: "Unauthorized client; no TeamsAuthorization header.",
-      },
-      { status: 401 }
-    );
-  }
-  const token = authorization.value.replace("Bearer ", "");
-  let decoded: JwtPayload;
+  let codeData: IOAuthCodeData;
   try {
-    decoded = await validateTeamsToken(token);
+    codeData = getTokenForCode(code);
   } catch {
     return NextResponse.json(
       {
-        error: "Unable to validate token.",
-      },
-      { status: 401 }
-    );
-  }
-  const oid = decoded["oid"];
-  if (typeof oid !== "string") {
-    return NextResponse.json(
-      {
-        error: "Invalid oid in token.",
-      },
-      { status: 401 }
-    );
-  }
-  const tid = decoded["tid"];
-  if (typeof tid !== "string") {
-    return NextResponse.json(
-      {
-        error: "Invalid tid in token.",
-      },
-      { status: 401 }
-    );
-  }
-  if (!isOAuthValidCode(code, oid)) {
-    return NextResponse.json(
-      {
-        error: "Unauthorized code.",
+        error: "Invalid or expired code.",
       },
       { status: 401 }
     );
@@ -105,8 +67,8 @@ export const POST = async (req: NextRequest) => {
   try {
     console.log("oauth2/m365-tab/token: starting to get obo tokens");
     const results = await msalClient.acquireTokenOnBehalfOf({
-      authority: `https://login.microsoftonline.com/${tid}`,
-      oboAssertion: token,
+      authority: `https://login.microsoftonline.com/${codeData.tid}`,
+      oboAssertion: codeData.accessToken,
       scopes: scopes,
       skipCache: false,
     });

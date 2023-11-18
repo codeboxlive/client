@@ -1,17 +1,25 @@
 import { v4 as uuid } from "uuid";
 
-const codeMap = new Map<string, string>();
-export function getOAuthCode(oid: string): string {
+export interface IOAuthCodeData {
+    accessToken: string;
+    tid: string;
+}
+
+const codeMap = new Map<string, IOAuthCodeData>();
+export function getOAuthCode(accessToken: string, tid: string): string {
     const code = uuid();
-    codeMap.set(oid, code);
+    codeMap.set(code, {
+        accessToken,
+        tid,
+    });
     return code;
 }
 
-export function isOAuthValidCode(code: string, oid: string): boolean {
-    const check = codeMap.get(oid);
-    if (check !== code) {
-        return false;
+export function getTokenForCode(code: string): IOAuthCodeData {
+    const res = codeMap.get(code);
+    if (res === undefined) {
+        throw new Error("Code not found");
     }
     codeMap.delete(code);
-    return true;
+    return res;
 }

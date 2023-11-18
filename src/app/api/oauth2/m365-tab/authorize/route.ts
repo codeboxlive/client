@@ -3,6 +3,7 @@ import { getOAuthCode } from "@/utils/oauth-utils";
 import { NextRequest, NextResponse } from "next/server";
 
 export const GET = async (req: NextRequest) => {
+  console.log("attempting to authorize");
   const { searchParams } = new URL(req.url);
   const response_type = searchParams.get("response_type");
   const client_id = searchParams.get("client_id");
@@ -68,9 +69,18 @@ export const GET = async (req: NextRequest) => {
         { status: 401 }
       );
     }
+    const tid = decoded["tid"];
+    if (typeof tid !== "string") {
+      return NextResponse.json(
+        {
+          error: "Invalid tid in token.",
+        },
+        { status: 401 }
+      );
+    }
 
     // Generate a mock authorization code
-    const authorizationCode = getOAuthCode(oid);
+    const authorizationCode = getOAuthCode(token, tid);
     console.log(
       "redirecting back to auth0 with authorizationCode",
       authorizationCode
