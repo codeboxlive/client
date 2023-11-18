@@ -56,26 +56,36 @@ export const GET = async (req: NextRequest) => {
       { status: 401 }
     );
   }
-  const decoded = await validateTeamsToken(authorization.value);
-  const oid = decoded["oid"];
-  if (typeof oid !== "string") {
+  try {
+    const token = authorization.value.replace("Bearer ", "");
+    const decoded = await validateTeamsToken(token);
+    const oid = decoded["oid"];
+    if (typeof oid !== "string") {
+      return NextResponse.json(
+        {
+          error: "Invalid oid in token.",
+        },
+        { status: 401 }
+      );
+    }
+
+    // Generate a mock authorization code
+    const authorizationCode = getOAuthCode(oid);
+    console.log(
+      "redirecting back to auth0 with authorizationCode",
+      authorizationCode
+    );
+
+    // Redirect to the client's redirect URI with the authorization code
+    return NextResponse.redirect(
+      `${redirect_uri}?code=${authorizationCode}&state=${state}`
+    );
+  } catch {
     return NextResponse.json(
       {
-        error: "Invalid oid in token.",
+        error: "Invalid token.",
       },
       { status: 401 }
     );
   }
-
-  // Generate a mock authorization code
-  const authorizationCode = getOAuthCode(oid);
-  console.log(
-    "redirecting back to auth0 with authorizationCode",
-    authorizationCode
-  );
-
-  // Redirect to the client's redirect URI with the authorization code
-  return NextResponse.redirect(
-    `${redirect_uri}?code=${authorizationCode}&state=${state}`
-  );
 };
