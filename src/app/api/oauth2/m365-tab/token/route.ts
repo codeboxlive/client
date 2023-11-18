@@ -45,7 +45,8 @@ export const POST = async (req: NextRequest) => {
       { status: 401 }
     );
   }
-  const decoded = await validateTeamsToken(authorization.value);
+  const token = authorization.value.replace("Bearer ", "");
+  const decoded = await validateTeamsToken(token);
   const oid = decoded["oid"];
   if (typeof oid !== "string") {
     return NextResponse.json(
