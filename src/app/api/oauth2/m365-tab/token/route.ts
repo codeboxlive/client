@@ -15,14 +15,19 @@ export const POST = async (req: NextRequest) => {
       { status: 400 }
     );
   }
-  const searchParams = url.searchParams;
-  const body = {
-    grant_type: searchParams.get("grant_type"),
-    code: searchParams.get("code"),
-    redirect_uri: searchParams.get("redirect_uri"),
-    client_id: searchParams.get("client_id"),
-    client_secret: searchParams.get("client_secret"),
-  };
+  let body: any;
+  try {
+    body = await req.json();
+  } catch {
+    const searchParams = url.searchParams;
+    body = {
+      grant_type: searchParams.get("grant_type"),
+      code: searchParams.get("code"),
+      redirect_uri: searchParams.get("redirect_uri"),
+      client_id: searchParams.get("client_id"),
+      client_secret: searchParams.get("client_secret"),
+    };
+  }
 
   if (!isIOAuthTokenBody(body)) {
     console.log("m365-tab/token: error invalid request");
