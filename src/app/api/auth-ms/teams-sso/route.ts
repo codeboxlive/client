@@ -17,7 +17,7 @@ export const GET = async (req: Request) => {
     const decoded = await validateTeamsToken(
       authorization.replace("Bearer ", "")
     );
-    NextResponse.json(decoded, {
+    return NextResponse.json(decoded, {
       status: 200,
     });
   } catch (error) {
