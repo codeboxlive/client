@@ -17,9 +17,15 @@ export const GET = async (req: Request) => {
     const decoded = await validateTeamsToken(
       authorization.replace("Bearer ", "")
     );
-    return NextResponse.json(decoded, {
+    const response = NextResponse.json(decoded, {
       status: 200,
     });
+    response.cookies.set({
+      name: "TeamsAuthorization",
+      value: authorization,
+      sameSite: "none",
+    });
+    return response;
   } catch (error) {
     return NextResponse.json(
       {

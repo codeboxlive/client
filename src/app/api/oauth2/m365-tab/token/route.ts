@@ -1,7 +1,10 @@
+import validateTeamsToken from "@/api/validateTeamsToken";
 import { isOAuthValidCode } from "@/utils/oauth-utils";
-import { NextResponse } from "next/server";
+import { NextResponse, NextRequest } from "next/server";
+import { msalClient } from "@/api/msal-client";
 
-export const POST = async (req: Request) => {
+
+export const POST = async (req: NextRequest) => {
   console.log("m365-tab/token: attempting to get token");
   const body = await req.json();
 
@@ -15,6 +18,7 @@ export const POST = async (req: Request) => {
     );
   }
   const { grant_type, code, redirect_uri, client_id, client_secret } = body;
+  
   console.log("getting token with request details:", JSON.stringify(body));
   if (client_id !== process.env.AUTH0_TEAMS_TAB_SSO_CLIENT_ID) {
     return NextResponse.json(
@@ -32,7 +36,35 @@ export const POST = async (req: Request) => {
       { status: 401 }
     );
   }
-  if (!isOAuthValidCode(code)) {
+  const authorization = req.cookies.get("TeamsAuthorization");
+  if (!authorization?.value) {
+    return NextResponse.json(
+      {
+        error: "Unauthorized client; no TeamsAuthorization header.",
+      },
+      { status: 401 }
+    );
+  }
+  const decoded = await validateTeamsToken(authorization.value);
+  const oid = decoded["oid"];
+  if (typeof oid !== "string") {
+    return NextResponse.json(
+      {
+        error: "Invalid oid in token.",
+      },
+      { status: 401 }
+    );
+  }
+  const tid = decoded["tid"];
+  if (typeof tid !== "string") {
+    return NextResponse.json(
+      {
+        error: "Invalid tid in token.",
+      },
+      { status: 401 }
+    );
+  }
+  if (!isOAuthValidCode(code, oid)) {
     return NextResponse.json(
       {
         error: "Unauthorized code.",
@@ -40,21 +72,41 @@ export const POST = async (req: Request) => {
       { status: 401 }
     );
   }
-  console.log("m365-tab/token: returning response");
-  // Generate a mock access token and a refresh token
-  const accessToken = "mockAccessToken123";
-  const refreshToken = "mockRefreshToken123";
+  const scopes = ["https://graph.microsoft.com/User.Read"];
+  try {
+    console.log("oauth2/m365-tab/token: starting to get obo tokens");
+    const results = await msalClient.acquireTokenOnBehalfOf({
+      authority: `https://login.microsoftonline.com/${tid}`,
+      oboAssertion: authorization.value.replace("Bearer ", ""),
+      scopes: scopes,
+      skipCache: false
+    });
+    if (!results) {
+      throw new Error("Null token response");
+    }
+    console.log("oauth2/m365-tab/token: received obo tokens");
+    // Generate a mock access token and a refresh token
 
-  // Send the access token and refresh token to the client
-  NextResponse.json(
-    {
-      access_token: accessToken,
-      token_type: "bearer",
-      expires_in: 3600,
-      refresh_token: refreshToken,
-    },
-    { status: 200 }
-  );
+    const expiresOn = results.expiresOn?.getTime() ?? 0;
+  
+    // Send the access token and refresh token to the client
+    return NextResponse.json(
+      {
+        access_token: results.accessToken,
+        token_type: "Bearer",
+        expires_in: expiresOn - Date.now(),
+      },
+      { status: 200 }
+    );
+  } catch (err) {
+    console.error(err);
+    return NextResponse.json(
+      {
+        error: "Unable to acquire OBO tokens.",
+      },
+      { status: 401 }
+    );
+  }
 };
 
 interface IOAuthTokenBody {

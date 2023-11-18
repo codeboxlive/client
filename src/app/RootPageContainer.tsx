@@ -40,6 +40,25 @@ export const RootPageContainer: FC<IRootPageProps> = ({ redirectTo }) => {
     [setAuthError]
   );
 
+  const defaultRedirectTo = window.location.pathname + window.location.search;
+
+  const authenticateViaTeams = useCallback(
+    async (path: "signup" | "login", connection?: "Microsoft-365-Tab-SSO") => {
+      try {
+        await authentication.authenticate({
+          url:
+            window.location.origin + "/api/auth-teams/" + path + connection
+              ? `?connection=${connection}`
+              : "",
+        });
+        router.push(`${redirectTo ?? defaultRedirectTo}?inTeams=true`);
+      } catch (err: unknown) {
+        setUnknownAuthError(err);
+      }
+    },
+    [defaultRedirectTo, redirectTo, router, setUnknownAuthError]
+  );
+
   const authenticateWithTeamsSSO = useCallback(
     async (silent: boolean) => {
       try {
@@ -48,16 +67,17 @@ export const RootPageContainer: FC<IRootPageProps> = ({ redirectTo }) => {
         });
         const response = await fetch("/api/auth-ms/teams-sso", {
           headers: {
-            "Authorization": `Bearer ${token}`,
-          }
+            Authorization: `Bearer ${token}`,
+          },
         });
         const json = await response.json();
         console.log(json);
+        authenticateViaTeams("login", "Microsoft-365-Tab-SSO");
       } catch (err: unknown) {
         setUnknownAuthError(err);
       }
     },
-    [setUnknownAuthError]
+    [setUnknownAuthError, authenticateViaTeams]
   );
 
   useEffect(() => {
@@ -100,18 +120,6 @@ export const RootPageContainer: FC<IRootPageProps> = ({ redirectTo }) => {
   }
 
   const IN_TEAMS = inTeams();
-  const defaultRedirectTo = window.location.pathname + window.location.search;
-
-  const authenticateViaTeams = async (path: "signup" | "login") => {
-    try {
-      await authentication.authenticate({
-        url: window.location.origin + "/api/auth-teams/" + path,
-      });
-      router.push(`${redirectTo ?? defaultRedirectTo}?inTeams=true`);
-    } catch (err: unknown) {
-      setUnknownAuthError(err);
-    }
-  };
 
   return (
     <FlexColumn expand="fill">

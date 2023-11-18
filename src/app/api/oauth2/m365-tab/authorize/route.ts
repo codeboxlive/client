@@ -1,7 +1,8 @@
+import validateTeamsToken from "@/api/validateTeamsToken";
 import { getOAuthCode } from "@/utils/oauth-utils";
-import { NextResponse } from "next/server";
+import { NextRequest, NextResponse } from "next/server";
 
-export const GET = (req: Request) => {
+export const GET = async (req: NextRequest) => {
   const { searchParams } = new URL(req.url);
   const response_type = searchParams.get("response_type");
   const client_id = searchParams.get("client_id");
@@ -46,9 +47,28 @@ export const GET = (req: Request) => {
       { status: 401 }
     );
   }
+  const authorization = req.cookies.get("TeamsAuthorization");
+  if (!authorization?.value) {
+    return NextResponse.json(
+      {
+        error: "Unauthorized client; no TeamsAuthorization header.",
+      },
+      { status: 401 }
+    );
+  }
+  const decoded = await validateTeamsToken(authorization.value);
+  const oid = decoded["oid"];
+  if (typeof oid !== "string") {
+    return NextResponse.json(
+      {
+        error: "Invalid oid in token.",
+      },
+      { status: 401 }
+    );
+  }
 
   // Generate a mock authorization code
-  const authorizationCode = getOAuthCode();
+  const authorizationCode = getOAuthCode(oid);
   console.log(
     "redirecting back to auth0 with authorizationCode",
     authorizationCode
