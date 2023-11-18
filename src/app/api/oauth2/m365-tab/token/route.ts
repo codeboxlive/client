@@ -6,7 +6,17 @@ import { msalClient } from "@/api/msal-client";
 
 export const POST = async (req: NextRequest) => {
   console.log("m365-tab/token: attempting to get token");
-  const body = await req.json();
+  let body: any;
+  try {
+    body = await req.json();
+  } catch {
+    return NextResponse.json(
+      {
+        error: "Cannot parse JSON body.",
+      },
+      { status: 500 }
+    );
+  }
 
   if (!isIOAuthTokenBody(body)) {
     console.log("m365-tab/token: error invalid request");
