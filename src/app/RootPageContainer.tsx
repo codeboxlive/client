@@ -73,7 +73,7 @@ export const RootPageContainer: FC<IRootPageProps> = ({ redirectTo }) => {
         });
         const json = await response.json();
         console.log(json);
-        authenticateViaTeams("login", "Microsoft-365-Tab-SSO");
+        authenticateViaTeams("signup", "Microsoft-365-Tab-SSO");
       } catch (err: unknown) {
         setUnknownAuthError(err);
       }
