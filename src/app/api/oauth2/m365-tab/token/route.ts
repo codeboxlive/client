@@ -30,7 +30,7 @@ export const POST = async (req: NextRequest) => {
   }
 
   if (!isIOAuthTokenBody(body)) {
-    console.log("m365-tab/token: error invalid request", JSON.stringify(body));
+    console.log("m365-tab/token: error invalid request", JSON.stringify(body), "\nURL:", url.href);
     return NextResponse.json(
       {
         error: "Invalid request body.",
@@ -40,7 +40,7 @@ export const POST = async (req: NextRequest) => {
   }
   const { grant_type, code, redirect_uri, client_id, client_secret } = body;
 
-  console.log("getting token with request details:", JSON.stringify(body));
+  console.log("getting token with request details:", JSON.stringify(body), "\nURL:", url.href);
   if (client_id !== process.env.AUTH0_TEAMS_TAB_SSO_CLIENT_ID) {
     return NextResponse.json(
       {
