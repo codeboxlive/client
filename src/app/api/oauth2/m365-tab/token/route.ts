@@ -61,7 +61,7 @@ export const POST = async (req: NextRequest) => {
       { status: 400 }
     );
   }
-  const { grant_type, code, redirect_uri, client_id, client_secret } = body;
+  const { code, redirect_uri, client_id, client_secret } = body;
 
   console.log(
     "getting token with request details:",
@@ -83,6 +83,27 @@ export const POST = async (req: NextRequest) => {
     return NextResponse.json(
       {
         error: "Unauthorized secret.",
+      },
+      { status: 401 }
+    );
+  }
+  let redirectUrl: URL;
+  try {
+    redirectUrl = new URL(redirect_uri);
+  } catch {
+    console.error("m365-tab/token: invalid redirect_uri");
+    return NextResponse.json(
+      {
+        error: "Invalid redirect_uri.",
+      },
+      { status: 400 }
+    );
+  }
+  if (redirectUrl.origin !== process.env.AUTH0_ISSUER_BASE_URL) {
+    console.error("m365-tab/token: invalid redirect_uri origin", redirectUrl.origin);
+    return NextResponse.json(
+      {
+        error: "Invalid redirect_uri origin.",
       },
       { status: 401 }
     );

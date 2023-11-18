@@ -3,7 +3,7 @@ import { getOAuthCode } from "@/utils/oauth-utils";
 import { NextRequest, NextResponse } from "next/server";
 
 export const GET = async (req: NextRequest) => {
-  console.log("attempting to authorize");
+  console.log("m365-token/authorize: attempting to authorize");
   const { searchParams } = new URL(req.url);
   const response_type = searchParams.get("response_type");
   const client_id = searchParams.get("client_id");
@@ -24,8 +24,16 @@ export const GET = async (req: NextRequest) => {
       { status: 400 }
     );
   }
-
-  // Mock client validation
+  if (
+    client_id !== process.env.AUTH0_TEAMS_TAB_SSO_CLIENT_ID
+  ) {
+    return NextResponse.json(
+      {
+        error: "Unauthorized client - invalid clientId.",
+      },
+      { status: 401 }
+    );
+  }
   let redirectUrl: URL;
   try {
     redirectUrl = new URL(redirect_uri);
@@ -38,12 +46,11 @@ export const GET = async (req: NextRequest) => {
     );
   }
   if (
-    client_id !== process.env.AUTH0_TEAMS_TAB_SSO_CLIENT_ID ||
     redirectUrl.origin !== process.env.AUTH0_ISSUER_BASE_URL
   ) {
     return NextResponse.json(
       {
-        error: "Unauthorized client.",
+        error: "Unauthorized client - invalid redirectUrl.",
       },
       { status: 401 }
     );

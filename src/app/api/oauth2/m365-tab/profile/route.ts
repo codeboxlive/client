@@ -39,13 +39,42 @@ export const GET = async (req: Request) => {
         { status: 401 }
       );
     }
+    if (decoded["aud"] !== "https://graph.microsoft.com") {
+      console.error("Invalid aud in token of", decoded["aud"]);
+      return NextResponse.json(
+        {
+          error: "Invalid aud in token.",
+        },
+        { status: 401 }
+      );
+    }
+    if (decoded["iss"] !== `https://sts.windows.net/${decoded["tid"]}/`) {
+      console.error("Invalid iss in token of", decoded["iss"]);
+      return NextResponse.json(
+        {
+          error: "Invalid tid in token.",
+        },
+        { status: 401 }
+      );
+    }
+    if (decoded["appid"] !== process.env.AAD_CLIENT_ID) {
+      console.error("Invalid appid in token of", decoded["appid"]);
+      return NextResponse.json(
+        {
+          error: "Invalid appid in token.",
+        },
+        { status: 401 }
+      );
+    }
     console.log("m365-tab/profile", JSON.stringify(decoded));
     return NextResponse.json(
       {
         oid,
         sub: decoded.sub,
-        email: decoded.preferred_username,
+        email: decoded.upn,
         name: decoded.name,
+        family_name: decoded.family_name,
+        given_name: decoded.given_name,
         tid,
       },
       { status: 200 }
