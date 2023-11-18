@@ -2,33 +2,41 @@ import validateTeamsToken from "@/api/validateTeamsToken";
 import { isOAuthValidCode } from "@/utils/oauth-utils";
 import { NextResponse, NextRequest } from "next/server";
 import { msalClient } from "@/api/msal-client";
-
+import { JwtPayload } from "jsonwebtoken";
 
 export const POST = async (req: NextRequest) => {
   console.log("m365-tab/token: attempting to get token");
-  let body: any;
+  let url: URL;
   try {
-    body = await req.json();
+    url = new URL(req.url);
   } catch {
     return NextResponse.json(
       {
         error: "Cannot parse JSON body.",
       },
-      { status: 500 }
+      { status: 400 }
     );
   }
+  const searchParams = url.searchParams;
+  const body = {
+    grant_type: searchParams.get("grant_type"),
+    code: searchParams.get("code"),
+    redirect_uri: searchParams.get("redirect_uri"),
+    client_id: searchParams.get("client_id"),
+    client_secret: searchParams.get("client_secret"),
+  };
 
   if (!isIOAuthTokenBody(body)) {
     console.log("m365-tab/token: error invalid request");
     return NextResponse.json(
       {
-        error: "Invalid request.",
+        error: "Invalid request body.",
       },
       { status: 400 }
     );
   }
   const { grant_type, code, redirect_uri, client_id, client_secret } = body;
-  
+
   console.log("getting token with request details:", JSON.stringify(body));
   if (client_id !== process.env.AUTH0_TEAMS_TAB_SSO_CLIENT_ID) {
     return NextResponse.json(
@@ -56,7 +64,17 @@ export const POST = async (req: NextRequest) => {
     );
   }
   const token = authorization.value.replace("Bearer ", "");
-  const decoded = await validateTeamsToken(token);
+  let decoded: JwtPayload;
+  try {
+    decoded = await validateTeamsToken(token);
+  } catch {
+    return NextResponse.json(
+      {
+        error: "Unable to validate token.",
+      },
+      { status: 401 }
+    );
+  }
   const oid = decoded["oid"];
   if (typeof oid !== "string") {
     return NextResponse.json(
@@ -88,9 +106,9 @@ export const POST = async (req: NextRequest) => {
     console.log("oauth2/m365-tab/token: starting to get obo tokens");
     const results = await msalClient.acquireTokenOnBehalfOf({
       authority: `https://login.microsoftonline.com/${tid}`,
-      oboAssertion: authorization.value.replace("Bearer ", ""),
+      oboAssertion: token,
       scopes: scopes,
-      skipCache: false
+      skipCache: false,
     });
     if (!results) {
       throw new Error("Null token response");
@@ -99,7 +117,7 @@ export const POST = async (req: NextRequest) => {
     // Generate a mock access token and a refresh token
 
     const expiresOn = results.expiresOn?.getTime() ?? 0;
-  
+
     // Send the access token and refresh token to the client
     return NextResponse.json(
       {
