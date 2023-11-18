@@ -1,9 +1,11 @@
 import { NextResponse } from "next/server";
 
 export const POST = async (req: Request) => {
+  console.log("m365-tab/token: attempting to get token");
   const body = await req.json();
 
   if (!isIOAuthTokenBody(body)) {
+    console.log("m365-tab/token: error invalid request");
     return NextResponse.json(
       {
         error: "Invalid request.",
@@ -37,6 +39,7 @@ export const POST = async (req: Request) => {
       { status: 401 }
     );
   }
+  console.log("m365-tab/token: returning response");
   // Generate a mock access token and a refresh token
   const accessToken = "mockAccessToken123";
   const refreshToken = "mockRefreshToken123";

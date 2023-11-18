@@ -48,6 +48,10 @@ export const GET = (req: Request) => {
 
   // Generate a mock authorization code
   const authorizationCode = "mockAuthCode123";
+  console.log(
+    "redirecting back to auth0 with authorizationCode",
+    authorizationCode
+  );
 
   // Redirect to the client's redirect URI with the authorization code
   return NextResponse.redirect(
