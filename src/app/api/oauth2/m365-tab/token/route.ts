@@ -70,6 +70,7 @@ export const POST = async (req: NextRequest) => {
     url.href
   );
   if (client_id !== process.env.AUTH0_TEAMS_TAB_SSO_CLIENT_ID) {
+    console.error("m365-tab/token: unauthorized client id");
     return NextResponse.json(
       {
         error: "Unauthorized client_id.",
@@ -78,6 +79,7 @@ export const POST = async (req: NextRequest) => {
     );
   }
   if (client_secret !== process.env.AUTH0_TEAMS_TAB_SSO_CLIENT_SECRET) {
+    console.error("m365-tab/token: unauthorized secret");
     return NextResponse.json(
       {
         error: "Unauthorized secret.",
@@ -89,6 +91,7 @@ export const POST = async (req: NextRequest) => {
   try {
     codeData = getTokenForCode(code);
   } catch {
+    console.error("m365-tab/token: invalid or expired code");
     return NextResponse.json(
       {
         error: "Invalid or expired code.",
@@ -98,7 +101,7 @@ export const POST = async (req: NextRequest) => {
   }
   const scopes = ["https://graph.microsoft.com/User.Read"];
   try {
-    console.log("oauth2/m365-tab/token: starting to get obo tokens");
+    console.log("m365-tab/token: starting to get obo tokens");
     const results = await msalClient.acquireTokenOnBehalfOf({
       authority: `https://login.microsoftonline.com/${codeData.tid}`,
       oboAssertion: codeData.accessToken,
@@ -108,7 +111,7 @@ export const POST = async (req: NextRequest) => {
     if (!results) {
       throw new Error("Null token response");
     }
-    console.log("oauth2/m365-tab/token: received obo tokens");
+    console.log("m365-tab/token: received obo tokens");
     // Generate a mock access token and a refresh token
 
     const expiresOn = results.expiresOn?.getTime() ?? 0;
@@ -123,14 +126,21 @@ export const POST = async (req: NextRequest) => {
       { status: 200 }
     );
   } catch (err) {
-    console.error(err);
-    if (typeof (err as any)?.message === "string")
+    console.error("An error occurred getting the OBO tokens", err);
+    if (typeof (err as any)?.message === "string") {
       return NextResponse.json(
         {
           error: "Unable to acquire OBO tokens. " + (err as any).message,
         },
         { status: 401 }
       );
+    }
+    return NextResponse.json(
+      {
+        error: "Unable to acquire OBO tokens.",
+      },
+      { status: 401 }
+    );
   }
 };
 
