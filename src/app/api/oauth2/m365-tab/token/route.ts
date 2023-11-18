@@ -8,29 +8,52 @@ export const POST = async (req: NextRequest) => {
   try {
     url = new URL(req.url);
   } catch {
+    console.error("m365-tab/token: cannot parse url");
     return NextResponse.json(
       {
-        error: "Cannot parse JSON body.",
+        error: "Cannot parse url.",
       },
       { status: 400 }
     );
   }
   let body: any;
   try {
-    body = await req.json();
-  } catch {
-    const searchParams = url.searchParams;
+    const formData = await req.formData();
+    console.log("m365-tab/token: using form data", formData.entries());
     body = {
-      grant_type: searchParams.get("grant_type"),
-      code: searchParams.get("code"),
-      redirect_uri: searchParams.get("redirect_uri"),
-      client_id: searchParams.get("client_id"),
-      client_secret: searchParams.get("client_secret"),
+      grant_type: formData.get("grant_type"),
+      code: formData.get("code"),
+      redirect_uri: formData.get("redirect_uri"),
+      client_id: formData.get("client_id"),
+      client_secret: formData.get("client_secret"),
     };
+  } catch {
+    try {
+      body = await req.json();
+      console.log("m365-tab/token: using JSON");
+    } catch {
+      const searchParams = url.searchParams;
+      console.log(
+        "m365-tab/token: using search params",
+        searchParams.entries()
+      );
+      body = {
+        grant_type: searchParams.get("grant_type"),
+        code: searchParams.get("code"),
+        redirect_uri: searchParams.get("redirect_uri"),
+        client_id: searchParams.get("client_id"),
+        client_secret: searchParams.get("client_secret"),
+      };
+    }
   }
 
   if (!isIOAuthTokenBody(body)) {
-    console.log("m365-tab/token: error invalid request", JSON.stringify(body), "\nURL:", url.href);
+    console.error(
+      "m365-tab/token: error invalid request",
+      JSON.stringify(body),
+      "\nURL:",
+      req.url
+    );
     return NextResponse.json(
       {
         error: "Invalid request body.",
@@ -40,7 +63,12 @@ export const POST = async (req: NextRequest) => {
   }
   const { grant_type, code, redirect_uri, client_id, client_secret } = body;
 
-  console.log("getting token with request details:", JSON.stringify(body), "\nURL:", url.href);
+  console.log(
+    "getting token with request details:",
+    JSON.stringify(body),
+    "\nURL:",
+    url.href
+  );
   if (client_id !== process.env.AUTH0_TEAMS_TAB_SSO_CLIENT_ID) {
     return NextResponse.json(
       {
@@ -97,12 +125,12 @@ export const POST = async (req: NextRequest) => {
   } catch (err) {
     console.error(err);
     if (typeof (err as any)?.message === "string")
-    return NextResponse.json(
-      {
-        error: "Unable to acquire OBO tokens. " + (err as any).message,
-      },
-      { status: 401 }
-    );
+      return NextResponse.json(
+        {
+          error: "Unable to acquire OBO tokens. " + (err as any).message,
+        },
+        { status: 401 }
+      );
   }
 };
 
