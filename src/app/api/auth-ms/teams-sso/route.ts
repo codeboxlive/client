@@ -24,6 +24,7 @@ export const GET = async (req: Request) => {
       name: "TeamsAuthorization",
       value: authorization,
       sameSite: "none",
+      secure: true,
     });
     return response;
   } catch (error) {
