@@ -1,3 +1,4 @@
+import { getOAuthCode } from "@/utils/oauth-utils";
 import { NextResponse } from "next/server";
 
 export const GET = (req: Request) => {
@@ -47,7 +48,7 @@ export const GET = (req: Request) => {
   }
 
   // Generate a mock authorization code
-  const authorizationCode = "mockAuthCode123";
+  const authorizationCode = getOAuthCode();
   console.log(
     "redirecting back to auth0 with authorizationCode",
     authorizationCode

@@ -1,3 +1,4 @@
+import { isOAuthValidCode } from "@/utils/oauth-utils";
 import { NextResponse } from "next/server";
 
 export const POST = async (req: Request) => {
@@ -31,7 +32,7 @@ export const POST = async (req: Request) => {
       { status: 401 }
     );
   }
-  if (code !== "mockAuthCode123") {
+  if (!isOAuthValidCode(code)) {
     return NextResponse.json(
       {
         error: "Unauthorized code.",
