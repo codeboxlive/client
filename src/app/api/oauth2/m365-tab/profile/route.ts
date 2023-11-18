@@ -1,10 +1,11 @@
-import validateTeamsToken from "@/api/validateTeamsToken";
+import jwt from "jsonwebtoken";
 import { NextResponse } from "next/server";
 
 export const GET = async (req: Request) => {
   console.log("attempting to get profile");
   const authHeader = req.headers.get("Authorization");
   if (!authHeader) {
+    console.error("Invalid request. Must include Authorization header.");
     return NextResponse.json(
       {
         error: "Invalid request. Must include Authorization header.",
@@ -14,9 +15,13 @@ export const GET = async (req: Request) => {
   }
   const token = authHeader.replace("Bearer ", "");
   try {
-    const decoded = await validateTeamsToken(token);
+    const decoded = jwt.decode(token);
+    if (!decoded || typeof decoded === "string") {
+      throw new Error("Invalid jwt");
+    }
     const oid = decoded["oid"];
     if (typeof oid !== "string") {
+      console.error("Invalid oid in token.");
       return NextResponse.json(
         {
           error: "Invalid oid in token.",
@@ -26,6 +31,7 @@ export const GET = async (req: Request) => {
     }
     const tid = decoded["tid"];
     if (typeof tid !== "string") {
+      console.error("Invalid tid in token.");
       return NextResponse.json(
         {
           error: "Invalid tid in token.",
@@ -43,7 +49,8 @@ export const GET = async (req: Request) => {
       },
       { status: 200 }
     );
-  } catch {
+  } catch (err) {
+    console.error("Internal error:", err);
     return NextResponse.json(
       {
         error: "Internal error.",

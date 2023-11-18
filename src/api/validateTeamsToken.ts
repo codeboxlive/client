@@ -49,6 +49,7 @@ export default async function validateTeamsToken(token: string): Promise<jwt.Jwt
   // Additional validation for issuer and audience can be added here
   const metadata = await decodeToken(token);
   if (metadata["aud"] !== process.env.AAD_CLIENT_ID) {
+    console.log("Invalid audience", JSON.stringify(metadata));
     throw new Error("Invalid AAD audience");
   }
   return metadata;
