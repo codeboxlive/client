@@ -91,9 +91,10 @@ export const POST = async (req: NextRequest) => {
     );
   } catch (err) {
     console.error(err);
+    if (typeof (err as any)?.message === "string")
     return NextResponse.json(
       {
-        error: "Unable to acquire OBO tokens.",
+        error: "Unable to acquire OBO tokens. " + (err as any).message,
       },
       { status: 401 }
     );
