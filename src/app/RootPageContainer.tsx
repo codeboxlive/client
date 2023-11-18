@@ -71,8 +71,7 @@ export const RootPageContainer: FC<IRootPageProps> = ({ redirectTo }) => {
             Authorization: `Bearer ${token}`,
           },
         });
-        const json = await response.json();
-        console.log(json);
+        await response.json();
         authenticateViaTeams("signup", "Microsoft-365-Tab-SSO");
       } catch (err: unknown) {
         setUnknownAuthError(err);
@@ -93,18 +92,15 @@ export const RootPageContainer: FC<IRootPageProps> = ({ redirectTo }) => {
   useEffect(() => {
     if (isLoading) return;
     if (!inTeams()) return;
+    if (user) return;
     authenticateWithTeamsSSO(true)
-      .then((token) => {
-        console.log("silent token", token);
-        // TODO: authenticate using token
-      })
       .catch((err) => {
         console.error(err);
       })
       .finally(() => {
         setAwaitingSilentAuth(false);
       });
-  }, [isLoading, authenticateWithTeamsSSO, setAwaitingSilentAuth]);
+  }, [isLoading, user, authenticateWithTeamsSSO, setAwaitingSilentAuth]);
 
   if (isLoading) {
     return <LoadWrapper text="Attempting to log in..." />;

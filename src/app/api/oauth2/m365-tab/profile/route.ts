@@ -39,6 +39,7 @@ export const GET = async (req: Request) => {
         { status: 401 }
       );
     }
+    console.log("m365-tab/profile", JSON.stringify(decoded));
     return NextResponse.json(
       {
         oid,
