@@ -30,7 +30,7 @@ export const POST = async (req: NextRequest) => {
   }
 
   if (!isIOAuthTokenBody(body)) {
-    console.log("m365-tab/token: error invalid request");
+    console.log("m365-tab/token: error invalid request", JSON.stringify(body));
     return NextResponse.json(
       {
         error: "Invalid request body.",
