@@ -86,6 +86,7 @@ export const useTeamsAppContext = (
           },
           user: {
             id: userId,
+            userPrincipalName: "smile@ryanbliss.me"
           },
         });
       }

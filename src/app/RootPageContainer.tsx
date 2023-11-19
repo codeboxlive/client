@@ -4,11 +4,18 @@ import { FlexColumn, FlexRow } from "@/components/flex";
 import { LoadWrapper } from "@/components/view-wrappers";
 import { inTeams, isSdkError } from "@/utils";
 import { useUser } from "@auth0/nextjs-auth0/client";
-import { Button, Subtitle1, Text, Title1 } from "@fluentui/react-components";
+import {
+  Button,
+  Text,
+  Title1,
+  Image,
+  tokens,
+} from "@fluentui/react-components";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { FC, useCallback, useEffect, useState } from "react";
 import { authentication } from "@microsoft/teams-js";
+import { useTeamsClientContext } from "@/context-providers";
 
 interface IRootPageProps {
   /**
@@ -22,6 +29,7 @@ export const RootPageContainer: FC<IRootPageProps> = ({ redirectTo }) => {
   const router = useRouter();
   const [authError, setAuthError] = useState<string | undefined>();
   const [awaitingSilentAuth, setAwaitingSilentAuth] = useState(inTeams());
+  const { teamsContext } = useTeamsClientContext();
 
   const setUnknownAuthError = useCallback(
     (err: unknown) => {
@@ -88,6 +96,9 @@ export const RootPageContainer: FC<IRootPageProps> = ({ redirectTo }) => {
         ) {
           return;
         }
+        if (message === "FailedToOpenWindow" && !silent) {
+          return;
+        }
         setUnknownAuthError(err);
       }
     },
@@ -120,6 +131,12 @@ export const RootPageContainer: FC<IRootPageProps> = ({ redirectTo }) => {
     return <LoadWrapper text="Attempting to log in..." />;
   }
 
+  const IN_TEAMS = inTeams();
+
+  if (IN_TEAMS && !teamsContext) {
+    return <LoadWrapper text="Waiting for app context..." />;
+  }
+
   if (awaitingSilentAuth) {
     return (
       <LoadWrapper text="Attempting to log in with Microsoft EntraID..." />
@@ -130,7 +147,8 @@ export const RootPageContainer: FC<IRootPageProps> = ({ redirectTo }) => {
     return <LoadWrapper text={`Welcome back! Loading projects...`} />;
   }
 
-  const IN_TEAMS = inTeams();
+  const upn = teamsContext?.user?.userPrincipalName;
+  const ssoLayout = IN_TEAMS && !!upn;
 
   return (
     <FlexColumn expand="fill">
@@ -140,14 +158,55 @@ export const RootPageContainer: FC<IRootPageProps> = ({ redirectTo }) => {
           padding: "24px",
         }}
       >
-        <FlexColumn marginSpacer="medium">
-          <FlexColumn marginSpacer="small">
-            <Title1>{"Welcome to Codebox Live"}</Title1>
-            <Subtitle1>{"Please log in to continue"}</Subtitle1>
-          </FlexColumn>
-          <FlexRow marginSpacer="small">
-            {!IN_TEAMS && (
+        <FlexColumn marginSpacer="medium" hAlign="center">
+          <Image
+            src="/logo.svg"
+            alt="Codebox Live logo"
+            width={156}
+            height={156}
+          />
+          <FlexColumn
+            style={{
+              width: "320px",
+              padding: "32px",
+              backgroundColor: tokens.colorNeutralBackground1,
+              boxShadow: tokens.shadow8,
+              borderRadius: tokens.borderRadiusXLarge,
+            }}
+            marginSpacer="medium"
+            vAlign="center"
+            hAlign="center"
+          >
+            <Title1 align="center">{"Sign in to continue"}</Title1>
+            {ssoLayout && (
               <>
+                <FlexRow
+                  spaceBetween
+                  expand="horizontal"
+                  vAlign="center"
+                  marginSpacer="small"
+                  style={{
+                    borderRadius: tokens.borderRadiusLarge,
+                    borderStyle: "solid",
+                    borderWidth: tokens.strokeWidthThin,
+                    borderColor: tokens.colorNeutralStroke1,
+                    padding: "8px",
+                  }}
+                >
+                  <Text weight="semibold">{upn}</Text>
+                  <Button
+                    appearance="primary"
+                    onClick={() => {
+                      authenticateWithTeamsSSO(false);
+                    }}
+                  >
+                    {"Continue"}
+                  </Button>
+                </FlexRow>
+              </>
+            )}
+            {!ssoLayout && (
+              <FlexRow marginSpacer="small">
                 <Link
                   href={`/api/auth/signup?returnTo=${
                     redirectTo ?? defaultRedirectTo
@@ -162,38 +221,34 @@ export const RootPageContainer: FC<IRootPageProps> = ({ redirectTo }) => {
                 >
                   <Button appearance="primary">{"Log in"}</Button>
                 </Link>
-              </>
+              </FlexRow>
             )}
-            {IN_TEAMS && (
-              <>
+            {!!authError && <Text>{authError}</Text>}
+          </FlexColumn>
+          {ssoLayout && (
+            <FlexColumn vAlign="center" hAlign="center" marginSpacer="small">
+              <Text>{`Not ${upn}?`}</Text>
+              <FlexColumn hAlign="center">
                 <Button
-                  appearance="outline"
-                  onClick={() => {
-                    authenticateViaTeams("signup");
-                  }}
-                >
-                  {"Sign up"}
-                </Button>
-                <Button
-                  appearance="primary"
+                  appearance="subtle"
                   onClick={() => {
                     authenticateViaTeams("login");
                   }}
                 >
-                  {"Log in"}
+                  {"Log in with a different account"}
                 </Button>
+                <Text italic>{"OR"}</Text>
                 <Button
-                  appearance="primary"
+                  appearance="subtle"
                   onClick={() => {
-                    authenticateWithTeamsSSO(false);
+                    authenticateViaTeams("signup");
                   }}
                 >
-                  {"Log in with Microsoft"}
+                  {"Create new account"}
                 </Button>
-              </>
-            )}
-          </FlexRow>
-          {!!authError && <Text>{authError}</Text>}
+              </FlexColumn>
+            </FlexColumn>
+          )}
         </FlexColumn>
       </FlexColumn>
     </FlexColumn>
