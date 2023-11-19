@@ -6,8 +6,9 @@ import { inTeams } from "@/utils";
 import { FlexRow } from "@/components/flex";
 import { useRouter } from "next/navigation";
 import { Home28Filled } from "@fluentui/react-icons";
-import { Button, tokens } from "@fluentui/react-components";
+import { Button, tokens, Image } from "@fluentui/react-components";
 import { useTeamsClientContext } from "@/context-providers/teams-client-provider";
+import Link from "next/link";
 
 interface INavigationBarProps {
   isL1: boolean;
@@ -44,14 +45,14 @@ export const NavigationBar: FC<INavigationBarProps> = ({
         {teamsContext?.page?.frameContext !== FrameContexts.meetingStage && (
           <>
             {isL1 && (
-              <Button
-                appearance="subtle"
-                onClick={() => {
-                  router.push(`/projects?inTeams=${inTeams()}`);
-                }}
-              >
-                {"Codebox Live"}
-              </Button>
+              <Link href="/?inTeams=true">
+                <Image
+                  src="/logo.svg"
+                  alt="Codebox Live logo"
+                  width={32}
+                  height={32}
+                />
+              </Link>
             )}
             {!isL1 && (
               <Button
