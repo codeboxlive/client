@@ -32,18 +32,26 @@ export const RootPageContainer: FC<IRootPageProps> = ({ redirectTo }) => {
   const { teamsContext } = useTeamsClientContext();
 
   const setUnknownAuthError = useCallback(
-    (err: unknown) => {
+    (err: unknown, silent?: boolean) => {
+      let prefix: string = "";
+      let message: string = "An unknown error occurred";
       if (isSdkError(err)) {
-        setAuthError(
-          `[${err.errorCode}] ${err.message ?? "An unknown error occurred"}`
-        );
+        prefix = `[${err.errorCode}] `;
+        message = err.message ?? "undefined";
       } else if (err instanceof Error) {
-        setAuthError(err.message);
+        message = err.message;
       } else if (typeof err === "string") {
-        setAuthError(err);
-      } else {
-        setAuthError("An unknown error occurred");
+        message = err;
       }
+      if (["CancelledByUser"].includes(message)) {
+        return;
+      }
+      if (message === "FailedToOpenWindow") {
+        if (silent) return;
+        message =
+          "Browser blocked opening authentication page in a pop-out window. Ensure pop-out windows are enabled in your browser.";
+      }
+      setAuthError(prefix + message);
     },
     [setAuthError]
   );
@@ -51,7 +59,11 @@ export const RootPageContainer: FC<IRootPageProps> = ({ redirectTo }) => {
   const defaultRedirectTo = window.location.pathname + window.location.search;
 
   const authenticateViaTeams = useCallback(
-    async (path: "signup" | "login", connection?: "Microsoft-365-Tab-SSO") => {
+    async (
+      path: "signup" | "login",
+      connection?: "Microsoft-365-Tab-SSO",
+      silent?: boolean
+    ) => {
       try {
         const url = new URL(window.location.origin + "/api/auth-teams/" + path);
         if (connection) {
@@ -62,7 +74,7 @@ export const RootPageContainer: FC<IRootPageProps> = ({ redirectTo }) => {
         });
         router.push(`${redirectTo ?? defaultRedirectTo}?inTeams=true`);
       } catch (err: unknown) {
-        setUnknownAuthError(err);
+        setUnknownAuthError(err, silent);
       }
     },
     [defaultRedirectTo, redirectTo, router, setUnknownAuthError]
@@ -80,26 +92,9 @@ export const RootPageContainer: FC<IRootPageProps> = ({ redirectTo }) => {
           },
         });
         await response.json();
-        authenticateViaTeams("signup", "Microsoft-365-Tab-SSO");
+        authenticateViaTeams("signup", "Microsoft-365-Tab-SSO", silent);
       } catch (err: unknown) {
-        let message: string = "An unknown error occurred";
-        if (isSdkError(err) || err instanceof Error) {
-          if (err.message) {
-            message = err.message;
-          }
-        } else if (typeof err === "string") {
-          message = err;
-        }
-        if (
-          message &&
-          ["FailedToOpenWindow", "CancelledByUser"].includes(message)
-        ) {
-          return;
-        }
-        if (message === "FailedToOpenWindow" && !silent) {
-          return;
-        }
-        setUnknownAuthError(err);
+        setUnknownAuthError(err, silent);
       }
     },
     [setUnknownAuthError, authenticateViaTeams]
