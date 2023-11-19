@@ -1,4 +1,4 @@
-'use client'
+"use client";
 
 import { FC, useCallback } from "react";
 import {
@@ -9,6 +9,7 @@ import {
   tokens,
 } from "@fluentui/react-components";
 import { Card } from "@fluentui/react-components";
+import { Pin20Regular } from "@fluentui/react-icons";
 import { useTeamsClientContext } from "../../context-providers";
 import { IProject } from "../../models";
 import { FlexRow } from "../flex";
@@ -22,9 +23,10 @@ import { useRouter } from "next/navigation";
 
 interface IProjectCardProps {
   project: IProject;
+  pinned?: boolean;
 }
 
-export const ProjectCard: FC<IProjectCardProps> = ({ project }) => {
+export const ProjectCard: FC<IProjectCardProps> = ({ project, pinned }) => {
   const { teamsContext } = useTeamsClientContext();
   const { root: clampStyle, twoLines: twoLinesStyle } = getTextClampStyles();
   const router = useRouter();
@@ -58,17 +60,23 @@ export const ProjectCard: FC<IProjectCardProps> = ({ project }) => {
         marginBottom: "12px",
       }}
     >
-      <FlexRow>
+      <FlexRow
+        marginSpacer="small"
+        vAlign="start"
+        expand="horizontal"
+        spaceBetween
+      >
         <Title3
           align="start"
           className={mergeClasses(clampStyle, twoLinesStyle)}
         >
           {project.title}
         </Title3>
+        {!!pinned && <Pin20Regular />}
       </FlexRow>
-      <FlexRow>
+      <FlexRow marginSpacer="small" vAlign="center">
         <Text align="start" className={mergeClasses(clampStyle)}>
-          {`${project.framework} ${project.language} | ${moment(
+          {`${project.framework} ${project.language} • ${moment(
             project.createdAt
           ).fromNow()}`}
         </Text>

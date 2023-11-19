@@ -24,20 +24,19 @@ interface IProjectListProps {}
 enum ProjectListTabType {
   recent = "Recent",
   owned = "Owned",
-  pinned = "Pinned",
 }
 
 function isProjectListTabType(value: any): value is ProjectListTabType {
   return Object.values(ProjectListTabType).includes(value);
 }
 
-export const ProjectList: FC<IProjectListProps> = memo(({}) => {
+export const ProjectList: FC<IProjectListProps> = () => {
   const { teamsContext } = useTeamsClientContext();
   const isSidePanel =
     teamsContext?.page.frameContext === FrameContexts.sidePanel;
   const threadId = teamsContext?.chat?.id || teamsContext?.channel?.id;
   const [selectedTab, setSelectedTab] = useState<ProjectListTabType>(
-    threadId ? ProjectListTabType.pinned : ProjectListTabType.recent
+    ProjectListTabType.recent
   );
   const { recentProjects, userProjects, pinnedProjects, error } =
     useCodeboxLiveContext();
@@ -65,45 +64,31 @@ export const ProjectList: FC<IProjectListProps> = memo(({}) => {
           <FlexItem noShrink>
             <FlexRow spaceBetween vAlign="center" wrap>
               <TabList selectedValue={selectedTab} onTabSelect={onTabSelect}>
-                {!!threadId && (
-                  <Tab value={ProjectListTabType.pinned}>{"Pinned"}</Tab>
-                )}
                 <Tab value={ProjectListTabType.recent}>{"Recent"}</Tab>
                 <Tab value={ProjectListTabType.owned}>{"Owned"}</Tab>
               </TabList>
               <CreateProjectActions />
             </FlexRow>
           </FlexItem>
-          {selectedTab === ProjectListTabType.pinned && (
-            <>
-              {pinnedProjects.length === 0 && (
-                <FlexColumn>
-                  <Text>{"Create a project to get started"}</Text>
-                </FlexColumn>
-              )}
-              {pinnedProjects.length > 0 && (
-                <FlexColumn expand="fill" marginSpacer="small">
-                  {pinnedProjects.map((project) => {
-                    return (
-                      <ProjectCard
-                        key={`pinned-project-${project._id}`}
-                        project={project}
-                      />
-                    );
-                  })}
-                </FlexColumn>
-              )}
-            </>
-          )}
           {selectedTab === ProjectListTabType.recent && (
             <>
-              {recentProjects.length === 0 && (
+              {recentProjects.length === 0 && pinnedProjects.length === 0 && (
                 <FlexColumn>
                   <Text>{"Create a project to get started"}</Text>
                 </FlexColumn>
               )}
               {recentProjects.length > 0 && (
                 <FlexColumn expand="fill" marginSpacer="small">
+                  {!!threadId &&
+                    pinnedProjects.map((project) => {
+                      return (
+                        <ProjectCard
+                          key={`pinned-project-${project._id}`}
+                          project={project}
+                          pinned
+                        />
+                      );
+                    })}
                   {recentProjects.map((project) => {
                     return (
                       <ProjectCard
@@ -141,5 +126,4 @@ export const ProjectList: FC<IProjectListProps> = memo(({}) => {
       </ScrollWrapper>
     </LoadErrorWrapper>
   );
-});
-ProjectList.displayName = "ProjectList";
+};
