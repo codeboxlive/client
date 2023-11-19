@@ -23,6 +23,7 @@ export const NavigationBar: FC<INavigationBarProps> = ({
 }) => {
   const { teamsContext } = useTeamsClientContext();
   const router = useRouter();
+  const IN_TEAMS = inTeams();
   return (
     <FlexRow
       expand="horizontal"
@@ -45,7 +46,7 @@ export const NavigationBar: FC<INavigationBarProps> = ({
         {teamsContext?.page?.frameContext !== FrameContexts.meetingStage && (
           <>
             {isL1 && (
-              <Link href="/?inTeams=true">
+              <Link href={`/?inTeams=${IN_TEAMS}`}>
                 <Image
                   src="/logo.svg"
                   alt="Codebox Live logo"
@@ -59,7 +60,7 @@ export const NavigationBar: FC<INavigationBarProps> = ({
                 icon={<Home28Filled />}
                 appearance="subtle"
                 onClick={() => {
-                  router.push(`/projects?inTeams=${inTeams()}`);
+                  router.push(`/projects?inTeams=${IN_TEAMS}`);
                 }}
               />
             )}
