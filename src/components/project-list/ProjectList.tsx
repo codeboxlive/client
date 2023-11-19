@@ -8,7 +8,7 @@ import {
   Title1,
 } from "@fluentui/react-components";
 import { FrameContexts } from "@microsoft/teams-js";
-import { FC, memo, useCallback, useState } from "react";
+import { FC, useCallback, useState } from "react";
 import {
   useCodeboxLiveContext,
   useTeamsClientContext,
@@ -47,6 +47,13 @@ export const ProjectList: FC<IProjectListProps> = () => {
     }
   }, []);
 
+  const relevantRecentProjects = !threadId
+    ? recentProjects
+    : recentProjects.filter(
+        (project) =>
+          !pinnedProjects.find((cProject) => cProject._id === project._id)
+      );
+
   return (
     <LoadErrorWrapper loading={false} error={error}>
       <ScrollWrapper>
@@ -77,7 +84,7 @@ export const ProjectList: FC<IProjectListProps> = () => {
                   <Text>{"Create a project to get started"}</Text>
                 </FlexColumn>
               )}
-              {recentProjects.length > 0 && (
+              {(recentProjects.length > 0 || pinnedProjects.length > 0) && (
                 <FlexColumn expand="fill" marginSpacer="small">
                   {!!threadId &&
                     pinnedProjects.map((project) => {
@@ -89,7 +96,7 @@ export const ProjectList: FC<IProjectListProps> = () => {
                         />
                       );
                     })}
-                  {recentProjects.map((project) => {
+                  {relevantRecentProjects.map((project) => {
                     return (
                       <ProjectCard
                         key={`recent-project-${project._id}`}
