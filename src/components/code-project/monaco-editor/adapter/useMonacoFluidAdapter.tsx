@@ -5,6 +5,7 @@ import { SequenceDeltaEvent, SharedString } from "fluid-framework";
 import { MergeTreeDeltaType, TextSegment } from "@fluidframework/merge-tree";
 import { useCallback, useEffect, useRef } from "react";
 import * as Monaco from "monaco-editor/esm/vs/editor/editor.api";
+import { TabFocus } from 'monaco-editor/esm/vs/editor/browser/config/tabFocus.js';
 import { SandpackFile, useSandpack } from "@codesandbox/sandpack-react";
 import { MonacoPackageLoader } from "./package-loader/MonacoPackageLoader";
 import { LiveSharePackages } from "./package-loader/packages/LiveSharePackages";
@@ -167,6 +168,12 @@ export const useMonacoFluidAdapter = (
         automaticLayout: true,
       }
     );
+    createdEditor.onDidFocusEditorWidget(() => {
+      TabFocus.setTabFocusMode(true);
+    });
+    createdEditor.onDidBlurEditorWidget(() => {
+      TabFocus.setTabFocusMode(false);
+    });
     // Listen for changes to the editor's model
     createdEditor.onDidChangeModelContent((e) => {
       if (
