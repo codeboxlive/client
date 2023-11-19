@@ -46,7 +46,11 @@ export const NavigationBar: FC<INavigationBarProps> = ({
         {teamsContext?.page?.frameContext !== FrameContexts.meetingStage && (
           <>
             {isL1 && (
-              <Link href={`/?inTeams=${IN_TEAMS}`}>
+              <Link href={`/?inTeams=${IN_TEAMS}`} style={{
+                display: "flex",
+                alignContent: "center",
+                justifyContent: "center",
+              }}>
                 <Image
                   src="/logo.svg"
                   alt="Codebox Live logo"
