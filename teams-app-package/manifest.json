@@ -1,6 +1,6 @@
 {
   "$schema": "https://developer.microsoft.com/en-us/json-schemas/teams/v1.16/MicrosoftTeams.schema.json",
-  "version": "1.0.1",
+  "version": "1.0.3",
   "manifestVersion": "1.16",
   "id": "ffb8bede-d6d3-4fc1-8f2f-d7d7861c8f1a",
   "packageName": "app.ryanbliss.codebox",
@@ -23,7 +23,7 @@
     "outline": "outline.png",
     "color": "color.png"
   },
-  "accentColor": "#38a2ff",
+  "accentColor": "#FFFFFF",
   "webApplicationInfo": {
     "id": "3e2417b8-9b4a-46ea-9032-f3bdc0e053ba",
     "resource": "api://www.codebox.live/ffb8bede-d6d3-4fc1-8f2f-d7d7861c8f1a"

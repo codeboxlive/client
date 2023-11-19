@@ -74,6 +74,20 @@ export const RootPageContainer: FC<IRootPageProps> = ({ redirectTo }) => {
         await response.json();
         authenticateViaTeams("signup", "Microsoft-365-Tab-SSO");
       } catch (err: unknown) {
+        let message: string = "An unknown error occurred";
+        if (isSdkError(err) || err instanceof Error) {
+          if (err.message) {
+            message = err.message;
+          }
+        } else if (typeof err === "string") {
+          message = err;
+        }
+        if (
+          message &&
+          ["FailedToOpenWindow", "CancelledByUser"].includes(message)
+        ) {
+          return;
+        }
         setUnknownAuthError(err);
       }
     },
