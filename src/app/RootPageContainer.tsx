@@ -43,7 +43,7 @@ export const RootPageContainer: FC<IRootPageProps> = ({ redirectTo }) => {
       } else if (typeof err === "string") {
         message = err;
       }
-      if (["CancelledByUser"].includes(message)) {
+      if (["CancelledByUser", "resourceRequiresConsent"].includes(message)) {
         return;
       }
       if (message === "FailedToOpenWindow") {
