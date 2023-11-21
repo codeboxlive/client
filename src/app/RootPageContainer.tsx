@@ -13,7 +13,7 @@ import {
 } from "@fluentui/react-components";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
-import { FC, useCallback, useEffect, useState } from "react";
+import { FC, useCallback, useEffect, useRef, useState } from "react";
 import { authentication } from "@microsoft/teams-js";
 import { useTeamsClientContext } from "@/context-providers";
 
@@ -29,7 +29,9 @@ export const RootPageContainer: FC<IRootPageProps> = ({ redirectTo }) => {
   const router = useRouter();
   const [authError, setAuthError] = useState<string | undefined>();
   const [awaitingSilentAuth, setAwaitingSilentAuth] = useState(inTeams());
+  const [ssoManualAttemptActive, setSSOManualAttemptActive] = useState(false);
   const { teamsContext } = useTeamsClientContext();
+  const mountedRef = useRef(true);
 
   const setUnknownAuthError = useCallback(
     (err: unknown, silent?: boolean) => {
@@ -92,13 +94,20 @@ export const RootPageContainer: FC<IRootPageProps> = ({ redirectTo }) => {
           },
         });
         await response.json();
-        authenticateViaTeams("signup", "Microsoft-365-Tab-SSO", silent);
+        await authenticateViaTeams("signup", "Microsoft-365-Tab-SSO", silent);
       } catch (err: unknown) {
         setUnknownAuthError(err, silent);
       }
     },
     [setUnknownAuthError, authenticateViaTeams]
   );
+
+  useEffect(() => {
+    mountedRef.current = true;
+    return () => {
+      mountedRef.current = false;
+    }
+  }, []);
 
   useEffect(() => {
     if (!user) return;
@@ -122,24 +131,30 @@ export const RootPageContainer: FC<IRootPageProps> = ({ redirectTo }) => {
       });
   }, [isLoading, user, authenticateWithTeamsSSO, setAwaitingSilentAuth]);
 
-  if (isLoading) {
-    return <LoadWrapper text="Attempting to log in..." />;
-  }
-
   const IN_TEAMS = inTeams();
 
   if (IN_TEAMS && !teamsContext) {
     return <LoadWrapper text="Waiting for app context..." />;
   }
 
-  if (awaitingSilentAuth) {
-    return (
-      <LoadWrapper text="Attempting to log in with Microsoft EntraID..." />
-    );
+  if (isLoading) {
+    return <LoadWrapper text="Attempting to log in..." />;
   }
 
   if (user) {
     return <LoadWrapper text={`Welcome back! Loading projects...`} />;
+  }
+
+  if (awaitingSilentAuth) {
+    return (
+      <LoadWrapper text="Looking for existing account linked to your Microsoft EntraID..." />
+    );
+  }
+
+  if (ssoManualAttemptActive) {
+    return (
+      <LoadWrapper text="Logging in with Microsoft EntraID..." />
+    );
   }
 
   const upn = teamsContext?.user?.userPrincipalName;
@@ -172,7 +187,7 @@ export const RootPageContainer: FC<IRootPageProps> = ({ redirectTo }) => {
             vAlign="center"
             hAlign="center"
           >
-            <Title1 align="center">{"Sign in to continue"}</Title1>
+            <Title1 align="center">{"Sign in to start coding"}</Title1>
             {ssoLayout && (
               <>
                 <FlexRow
@@ -192,7 +207,12 @@ export const RootPageContainer: FC<IRootPageProps> = ({ redirectTo }) => {
                   <Button
                     appearance="primary"
                     onClick={() => {
-                      authenticateWithTeamsSSO(false);
+                      setSSOManualAttemptActive(true);
+                      authenticateWithTeamsSSO(false)
+                        .finally(() => {
+                          if (!mountedRef.current) return;
+                          setSSOManualAttemptActive(false);
+                        });
                     }}
                   >
                     {"Continue"}
