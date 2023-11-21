@@ -24,6 +24,10 @@ export const NavigationBar: FC<INavigationBarProps> = ({
   const { teamsContext } = useTeamsClientContext();
   const router = useRouter();
   const IN_TEAMS = inTeams();
+  const inChatOrChannel = !!teamsContext?.chat || !!teamsContext?.channel;
+  const inPersonalScope = IN_TEAMS ? !inChatOrChannel : false;
+  // Teams policy prohibits using app icon in navigation bar when in the personal app
+  const showLogo = isL1 && !inPersonalScope;
   return (
     <FlexRow
       expand="horizontal"
@@ -45,12 +49,15 @@ export const NavigationBar: FC<INavigationBarProps> = ({
       >
         {teamsContext?.page?.frameContext !== FrameContexts.meetingStage && (
           <>
-            {isL1 && (
-              <Link href={`/?inTeams=${IN_TEAMS}`} style={{
-                display: "flex",
-                alignContent: "center",
-                justifyContent: "center",
-              }}>
+            {showLogo && (
+              <Link
+                href={`/projects?inTeams=${IN_TEAMS}`}
+                style={{
+                  display: "flex",
+                  alignContent: "center",
+                  justifyContent: "center",
+                }}
+              >
                 <Image
                   src="/logo.svg"
                   alt="Codebox Live logo"
@@ -59,7 +66,7 @@ export const NavigationBar: FC<INavigationBarProps> = ({
                 />
               </Link>
             )}
-            {!isL1 && (
+            {!showLogo && (
               <Button
                 icon={<Home28Filled />}
                 appearance="subtle"

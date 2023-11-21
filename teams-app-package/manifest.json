@@ -48,7 +48,7 @@
       "entityId": "projects",
       "scopes": ["personal"],
       "context": ["personalTab"],
-      "name": "Projects",
+      "name": "Home",
       "contentUrl": "https://www.codebox.live?inTeams=true",
       "websiteUrl": "https://www.codebox.live?inTeams=false",
       "searchUrl": "https://www.codebox.live?inTeams=false"
