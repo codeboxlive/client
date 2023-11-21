@@ -79,5 +79,6 @@ export interface ICodeboxLiveContext {
   setProject: (projectData: ISetProject) => Promise<IProject>;
   deleteProject: (project: IProject) => Promise<void>;
   pinProjectToTeams: (project: IProject, threadId: string) => Promise<void>;
+  unpinProjectToTeams: (project: IProject, threadId: string) => Promise<void>;
   setCurrentProjectId: (value: string | undefined) => void;
 }

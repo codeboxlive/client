@@ -1,4 +1,4 @@
-'use client'
+"use client";
 
 import {
   Button,
@@ -13,6 +13,7 @@ import {
   Delete20Regular,
   Open20Regular,
   Pin20Regular,
+  PinOff20Regular,
   ArrowCircleRight20Regular,
 } from "@fluentui/react-icons";
 import { FC, useCallback } from "react";
@@ -36,8 +37,12 @@ export const ProjectOverflowMenu: FC<IProjectOverflowMenuProps> = ({
   onOpen,
 }) => {
   const { teamsContext } = useTeamsClientContext();
-  const { pinnedProjects, deleteProject, pinProjectToTeams } =
-    useCodeboxLiveContext();
+  const {
+    pinnedProjects,
+    deleteProject,
+    pinProjectToTeams,
+    unpinProjectToTeams,
+  } = useCodeboxLiveContext();
   const router = useRouter();
 
   const onDelete = useCallback(async () => {
@@ -70,6 +75,17 @@ export const ProjectOverflowMenu: FC<IProjectOverflowMenuProps> = ({
     }
   }, [project, teamsContext, pinProjectToTeams]);
 
+  const onUnpinProjectToTeams = useCallback(async () => {
+    const threadId = teamsContext?.channel?.id || teamsContext?.chat?.id;
+    if (threadId) {
+      try {
+        await unpinProjectToTeams(project, threadId);
+      } catch (error: any) {
+        console.error(error);
+      }
+    }
+  }, [project, teamsContext, unpinProjectToTeams]);
+
   const showPin = !!teamsContext?.channel?.id || !!teamsContext?.chat?.id;
   const isPinned = !!pinnedProjects.find(
     (checkProject) => checkProject._id === project._id
@@ -96,6 +112,14 @@ export const ProjectOverflowMenu: FC<IProjectOverflowMenuProps> = ({
           {showPin && !isPinned && (
             <MenuItem icon={<Pin20Regular />} onClick={onPinProjectToTeams}>
               {`Pin to ${teamsContext?.channel ? "channel" : "chat"}`}
+            </MenuItem>
+          )}
+          {showPin && isPinned && (
+            <MenuItem
+              icon={<PinOff20Regular />}
+              onClick={onUnpinProjectToTeams}
+            >
+              {`Unpin from ${teamsContext?.channel ? "channel" : "chat"}`}
             </MenuItem>
           )}
           <MenuItem icon={<Delete20Regular />} onClick={onDelete}>

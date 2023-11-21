@@ -41,6 +41,7 @@ export const CodeboxLiveProvider: FC<{
     setProject,
     deleteProject,
     pinProjectToTeams,
+    unpinProjectToTeams,
     setCurrentProjectId,
   } = useCodeboxLiveProjects(
     serverUserProjects,
@@ -109,6 +110,7 @@ export const CodeboxLiveProvider: FC<{
         setProject,
         deleteProject,
         pinProjectToTeams,
+        unpinProjectToTeams,
         setCurrentProjectId,
       }}
     >

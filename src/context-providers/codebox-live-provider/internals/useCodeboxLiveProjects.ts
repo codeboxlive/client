@@ -7,7 +7,6 @@ import {
   isProjectResponse,
   isUserProjectsResponse,
 } from "@/models";
-// import { ProjectsService } from "../../../service";
 import { useTeamsClientContext } from "../../teams-client-provider";
 
 export function useCodeboxLiveProjects(
@@ -24,6 +23,7 @@ export function useCodeboxLiveProjects(
   setProject: (projectData: ISetProject) => Promise<IProject>;
   deleteProject: (project: IProject) => Promise<void>;
   pinProjectToTeams: (project: IProject, threadId: string) => Promise<void>;
+  unpinProjectToTeams: (project: IProject, threadId: string) => Promise<void>;
   setCurrentProjectId: (value: string | undefined) => void;
 } {
   const initializedRef = useRef(false);
@@ -91,6 +91,31 @@ export function useCodeboxLiveProjects(
           }),
         }).then((res) => res.json());
         setPinnedProjectIds([project._id, ...pinnedProjectIdsRef.current]);
+      } catch (error: any) {
+        console.error(error);
+      }
+    },
+    [pinnedProjectIdsRef, setPinnedProjectIds]
+  );
+
+  const unpinProjectToTeams = useCallback(
+    async (project: IProject, threadId: string) => {
+      try {
+        await fetch("/api/projects/teams/pinned/delete", {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+          },
+          body: JSON.stringify({
+            projectId: project._id,
+            threadId: threadId,
+          }),
+        }).then((res) => res.json());
+        setPinnedProjectIds(
+          pinnedProjectIdsRef.current.filter(
+            (cId) => cId !== project._id
+          )
+        );
       } catch (error: any) {
         console.error(error);
       }
@@ -371,6 +396,7 @@ export function useCodeboxLiveProjects(
     setProject,
     deleteProject,
     pinProjectToTeams,
+    unpinProjectToTeams,
     setCurrentProjectId,
   };
 }

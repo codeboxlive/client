@@ -122,6 +122,7 @@ export const ProjectList: FC<IProjectListProps> = () => {
                       <ProjectCard
                         key={`owned-project-${project._id}`}
                         project={project}
+                        pinned={!!pinnedProjects.find((cProject) => cProject._id === project._id)}
                       />
                     );
                   })}

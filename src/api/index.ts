@@ -9,3 +9,4 @@ export * from "./getTeamsPinnedProjects";
 export * from "./postTeamsPinnedProject";
 export * from "./postRecentViewedProject";
 export * from "./getProject";
+export * from "./deleteTeamsPinnedProject";
