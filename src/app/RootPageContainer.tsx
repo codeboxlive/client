@@ -30,6 +30,7 @@ export const RootPageContainer: FC<IRootPageProps> = ({ redirectTo }) => {
   const [authError, setAuthError] = useState<string | undefined>();
   const [awaitingSilentAuth, setAwaitingSilentAuth] = useState(inTeams());
   const [ssoManualAttemptActive, setSSOManualAttemptActive] = useState(false);
+  const [loginActive, setLoginActive] = useState(false);
   const { teamsContext } = useTeamsClientContext();
   const mountedRef = useRef(true);
 
@@ -66,6 +67,7 @@ export const RootPageContainer: FC<IRootPageProps> = ({ redirectTo }) => {
       connection?: "Microsoft-365-Tab-SSO",
       silent?: boolean
     ) => {
+      setLoginActive(true);
       try {
         const url = new URL(window.location.origin + "/api/auth-teams/" + path);
         if (connection) {
@@ -77,9 +79,10 @@ export const RootPageContainer: FC<IRootPageProps> = ({ redirectTo }) => {
         router.push(`${redirectTo ?? defaultRedirectTo}?inTeams=true`);
       } catch (err: unknown) {
         setUnknownAuthError(err, silent);
+        setLoginActive(false);
       }
     },
-    [defaultRedirectTo, redirectTo, router, setUnknownAuthError]
+    [defaultRedirectTo, redirectTo, router, setUnknownAuthError, setLoginActive]
   );
 
   const authenticateWithTeamsSSO = useCallback(
@@ -106,7 +109,7 @@ export const RootPageContainer: FC<IRootPageProps> = ({ redirectTo }) => {
     mountedRef.current = true;
     return () => {
       mountedRef.current = false;
-    }
+    };
   }, []);
 
   useEffect(() => {
@@ -152,9 +155,11 @@ export const RootPageContainer: FC<IRootPageProps> = ({ redirectTo }) => {
   }
 
   if (ssoManualAttemptActive) {
-    return (
-      <LoadWrapper text="Logging in with Microsoft EntraID..." />
-    );
+    return <LoadWrapper text="Logging in with Microsoft EntraID..." />;
+  }
+
+  if (loginActive) {
+    return <LoadWrapper text="Logging in..." />
   }
 
   const upn = teamsContext?.user?.userPrincipalName;
@@ -177,7 +182,7 @@ export const RootPageContainer: FC<IRootPageProps> = ({ redirectTo }) => {
           />
           <FlexColumn
             style={{
-              width: "320px",
+              width: "356px",
               padding: "32px",
               backgroundColor: tokens.colorNeutralBackground1,
               boxShadow: tokens.shadow8,
@@ -208,11 +213,10 @@ export const RootPageContainer: FC<IRootPageProps> = ({ redirectTo }) => {
                     appearance="primary"
                     onClick={() => {
                       setSSOManualAttemptActive(true);
-                      authenticateWithTeamsSSO(false)
-                        .finally(() => {
-                          if (!mountedRef.current) return;
-                          setSSOManualAttemptActive(false);
-                        });
+                      authenticateWithTeamsSSO(false).finally(() => {
+                        if (!mountedRef.current) return;
+                        setSSOManualAttemptActive(false);
+                      });
                     }}
                   >
                     {"Continue"}
