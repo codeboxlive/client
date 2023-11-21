@@ -75,7 +75,7 @@ export interface ICodeboxLiveContext {
   currentProject: IProject | undefined;
   projectTemplates: IProjectTemplate[] | undefined;
   error: Error | undefined;
-  createProject: (template: IProjectTemplate) => Promise<void>;
+  createProject: (template: IProjectTemplate, customTitle?: string) => Promise<void>;
   setProject: (projectData: ISetProject) => Promise<IProject>;
   deleteProject: (project: IProject) => Promise<void>;
   pinProjectToTeams: (project: IProject, threadId: string) => Promise<void>;

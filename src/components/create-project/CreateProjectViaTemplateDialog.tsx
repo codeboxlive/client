@@ -24,6 +24,7 @@ import { FormRadioGroup } from "../form/FormRadioGroup";
 import { FlexColumn } from "../flex";
 import { Alert } from "@fluentui/react-components/unstable";
 import { getFlexColumnStyles } from "../flex/column/FlexColumn-styles";
+import { FormTextField } from "../form";
 
 interface ICreateProjectViaTemplateDialogProps {
   open: boolean;
@@ -77,6 +78,7 @@ export const CreateProjectViaTemplateDialog: FC<
     FrameworkType.react
   );
   const [preset, setPreset] = useState<string>();
+  const [customTitle, setCustomTitle] = useState<string>("");
 
   const onCreate = useCallback(async () => {
     const template = projectTemplates?.find(
@@ -85,8 +87,10 @@ export const CreateProjectViaTemplateDialog: FC<
     if (template) {
       setLoading(true);
       try {
-        console.log(template);
-        await createProject(template);
+        await createProject(
+          template,
+          customTitle !== "" ? customTitle : undefined
+        );
         setOpen(false);
       } catch (error: any) {
         if (error instanceof Error) {
@@ -100,7 +104,7 @@ export const CreateProjectViaTemplateDialog: FC<
         setLoading(false);
       }
     }
-  }, [createProject, preset, projectTemplates, setOpen]);
+  }, [customTitle, createProject, preset, projectTemplates, setOpen]);
 
   const onChangeLanguage = useCallback((value: string) => {
     if (isLanguageType(value)) {
@@ -137,6 +141,10 @@ export const CreateProjectViaTemplateDialog: FC<
     }));
 
   const { scroll: scrollStyle } = getFlexColumnStyles();
+
+  const presetTemplate = projectTemplates?.find(
+    (checkTemplate) => checkTemplate.gitRemoteUrl === preset
+  );
 
   return (
     <Dialog
@@ -180,6 +188,14 @@ export const CreateProjectViaTemplateDialog: FC<
                   onChange={onChangePreset}
                 />
               )}
+              <FormTextField
+                id="project-title"
+                label="Title"
+                placeholder={presetTemplate?.title ?? "Enter a custom title..."}
+                value={customTitle}
+                disabled={loading}
+                onChange={setCustomTitle}
+              />
               {loading && (
                 <FlexColumn
                   vAlign="center"

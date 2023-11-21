@@ -51,7 +51,7 @@ export const CodeboxLiveProvider: FC<{
   const { teamsContext } = useTeamsClientContext();
 
   const createProject = useCallback(
-    async (template: IProjectTemplate): Promise<void> => {
+    async (template: IProjectTemplate, customTitle?: string): Promise<void> => {
       try {
         console.log("CodeboxLiveProvider: creating from template", template);
         // Post initial project to get server-backed project ID
@@ -60,7 +60,7 @@ export const CodeboxLiveProvider: FC<{
         const postProjectResponse = await postProject({
           language: template.language,
           framework: template.framework,
-          title: template.title,
+          title: customTitle ?? template.title,
         });
         // Callback function to get initial code files from Git
         async function getInitialFiles(): Promise<Map<string, string>> {

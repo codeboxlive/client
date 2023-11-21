@@ -16,10 +16,13 @@ export async function createProject(
 ): Promise<IPostProjectResponse> {
   const userId = await getUserId();
 
+  const currentDate = new Date();
   const createProject: IProjectProps = {
     ...body,
-    createdAt: new Date(),
+    createdAt: currentDate,
     createdById: userId,
+    lastUpdatedDate: currentDate, 
+    lastUpdatedById: userId,
   };
 
   let client: MongoClient;

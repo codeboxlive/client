@@ -20,9 +20,8 @@ export async function setProject(
   if (body.title) {
     setProject.title = body.title;
   }
-  if (body.createdById) {
-    setProject.createdById = body.createdById;
-  }
+  setProject.lastUpdatedById = userId;
+  setProject.lastUpdatedDate = new Date();
 
   let client: MongoClient;
   try {

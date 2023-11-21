@@ -7,6 +7,8 @@ export interface IProjectProps {
   framework: FrameworkType;
   createdAt: Date;
   createdById: string;
+  lastUpdatedDate?: Date;
+  lastUpdatedById?: string;
   sandboxContainerId?: string;
 }
 
@@ -22,6 +24,8 @@ export function isProject(value: any): value is IProject {
     typeof value.title === "string" &&
     typeof value.createdAt === "string" &&
     typeof value.createdById === "string" &&
+    (typeof value.lastUpdatedById === "string" ||
+      value.lastUpdatedById === undefined) &&
     Object.values(FrameworkType).includes(value.framework) &&
     Object.values(LanguageType).includes(value.language)
   );
