@@ -22,7 +22,7 @@ export const HomeNavigationBar: FC = () => {
             IN_TEAMS ? "auth-teams" : "auth"
           }/logout?returnTo=/?inTeams=${IN_TEAMS}`}
         >
-          <Button size="small" appearance="subtle">
+          <Button size="small" appearance="subtle" tabIndex={-1}>
             {"Log out"}
           </Button>
         </Link>
