@@ -1,4 +1,9 @@
-import { handleAuth, handleLogin, handleLogout } from "@auth0/nextjs-auth0";
+import {
+  handleAuth,
+  handleLogin,
+  handleLogout,
+  handleProfile,
+} from "@auth0/nextjs-auth0";
 
 export const GET = handleAuth({
   login: handleLogin((req) => {
@@ -23,4 +28,5 @@ export const GET = handleAuth({
   logout: handleLogout({
     returnTo: "/?inTeams=true",
   }),
+  "refresh-profile": handleProfile({ refetch: true }),
 });

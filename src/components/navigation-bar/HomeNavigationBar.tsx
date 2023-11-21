@@ -1,32 +1,29 @@
-import { Button, Tab, TabList } from "@fluentui/react-components";
+import { Tab, TabList } from "@fluentui/react-components";
 import { FC } from "react";
-import { usePathname } from "next/navigation";
+import { usePathname, useRouter } from "next/navigation";
 import { NavigationBar } from "./NavigationBar";
-import Link from "next/link";
+import { ProfileMenu } from "./profile-menu/ProfileMenu";
 import { inTeams } from "@/utils";
 
 export const HomeNavigationBar: FC = () => {
   const pathname = usePathname();
-  const IN_TEAMS = inTeams();
+  const router = useRouter();
   return (
     <NavigationBar
       isL1={true}
       leftActions={
-        <TabList selectedValue={pathname}>
+        <TabList
+          selectedValue={pathname}
+          onTabSelect={(evt, data) => {
+            if (typeof data.value === "string") {
+              router.push(`${data.value}?inTeams=${inTeams()}`);
+            }
+          }}
+        >
           <Tab value={"/projects"}>{"Projects"}</Tab>
         </TabList>
       }
-      rightActions={
-        <Link
-          href={`/api/${
-            IN_TEAMS ? "auth-teams" : "auth"
-          }/logout?returnTo=/?inTeams=${IN_TEAMS}`}
-        >
-          <Button size="small" appearance="subtle" tabIndex={-1}>
-            {"Log out"}
-          </Button>
-        </Link>
-      }
+      rightActions={<ProfileMenu />}
     />
   );
 };
