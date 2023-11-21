@@ -4,5 +4,5 @@ import { LoadWrapper } from "@/components/view-wrappers/loadable-wrapper/LoadWra
 
 export default function Loading() {
   // You can add any UI inside Loading, including a Skeleton.
-  return <LoadWrapper text="Loading project..." />;
+  return <LoadWrapper text="Loading profile..." />;
 }

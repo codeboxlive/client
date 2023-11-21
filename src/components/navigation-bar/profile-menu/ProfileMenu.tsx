@@ -29,8 +29,9 @@ export const ProfileMenu: FC = () => {
           image={{
             src: user.picture ?? undefined,
           }}
+          role="button"
           /** Prevents the button jumping due to Flex not:last-child styles. Can't be a class or it will be overrode by Flex styles. */
-          style={{ marginRight: 0 }}
+          style={{ marginRight: 0, cursor: "pointer" }}
         />
       </MenuTrigger>
 
