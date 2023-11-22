@@ -106,7 +106,7 @@ export async function editBasicProfile(formData: FormData) {
     given_name,
   }});
   redirect(
-    `/api/auth/refresh-profile?returnTo=/profile?inTeams=${inTeams}`,
+    `/api/auth/refresh-profile?upsert=true&returnTo=/profile?inTeams=${inTeams}`,
     RedirectType.push
   );
 }

@@ -77,7 +77,7 @@ export const RootPageContainer: FC<IRootPageProps> = ({ redirectTo }) => {
         await authentication.authenticate({
           url: url.href,
         });
-        router.push(`${redirectTo ?? defaultRedirectTo}?inTeams=true`);
+        router.push(`/api/auth/refresh-profile?returnTo=${redirectTo ?? defaultRedirectTo}?inTeams=true`);
       } catch (err: unknown) {
         setUnknownAuthError(err, silent);
         setLoginActive(false);

@@ -8,23 +8,37 @@ import {
   handleLogout,
   handleProfile,
   handleCallback,
+  Session,
 } from "@auth0/nextjs-auth0";
 import { NextApiRequest, NextApiResponse } from "next";
 import { NextResponse } from "next/server";
 
 // Updating with the new session from the server
-const afterRefetch: AfterRefetch = (req, res, session) => {
+const afterRefetch: AfterRefetch = (
+  req,
+  res,
+  existingSession
+): Promise<Session> => {
   const newSession = getSession(req, res).then(async (session) => {
     if (!session) {
-      throw new Error("Invalid session");
+      return existingSession;
     }
+    return session;
+  });
+  return newSession;
+};
+
+const afterRefetchWithUpsert: AfterRefetch = (
+  req,
+  res,
+  existingSession
+): Promise<Session> => {
+  const callback = afterRefetch(req, res, existingSession) as Promise<Session>;
+  const sessionPromise = callback.then(async (session) => {
     await upsertUser(session);
     return session;
   });
-  if (newSession) {
-    return newSession;
-  }
-  return session;
+  return sessionPromise;
 };
 
 const internalHandleLogin = async (
@@ -70,13 +84,18 @@ export const GET = handleAuth({
     afterCallback,
   }),
   "refresh-profile": async (req: NextApiRequest, res: NextApiResponse) => {
+    let url = new URL(req.url!);
+    const returnTo = url.searchParams.get("returnTo");
+    const upsert = url.searchParams.get("upsert") === "true";
     try {
-      await handleProfile(req, res, { refetch: true, afterRefetch });
+      await handleProfile(req, res, {
+        refetch: true,
+        afterRefetch: upsert ? afterRefetchWithUpsert : afterRefetch,
+      });
     } catch (error) {
       console.error(error);
     }
-    let url = new URL(req.url!);
-    const returnTo = url.searchParams.get("returnTo");
+
     return NextResponse.redirect(url.origin + returnTo);
   },
 });
