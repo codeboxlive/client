@@ -15,9 +15,9 @@ import { useRouter } from "next/navigation";
 import { FC } from "react";
 
 export const ProfileMenu: FC = () => {
-  const { user } = useUser();
+  const { user, isLoading } = useUser();
   const router = useRouter();
-  if (!user) {
+  if (!user || isLoading) {
     return null;
   }
   const IN_TEAMS = inTeams();

@@ -12,9 +12,10 @@ import { FormTextField } from "@/components/form";
 import { editBasicProfile } from "./actions";
 import { FC } from "react";
 import { useFormStatus } from "react-dom";
+import { LoadWrapper } from "@/components/view-wrappers";
 
 const Profile: NextPage = () => {
-  const { user } = useUser();
+  const { user, isLoading } = useUser();
   const { teamsContext } = useTeamsClientContext();
   const isSidePanel =
     teamsContext?.page.frameContext === FrameContexts.sidePanel;
@@ -24,6 +25,9 @@ const Profile: NextPage = () => {
     typeof user.family_name === "string" ? user.family_name : "";
   // const phone_number =
   //   typeof user.phone_number === "string" ? user.phone_number : "";
+  if (isLoading) {
+    return <LoadWrapper text="Getting profile" />;
+  }
   return (
     <FlexColumn expand="fill" vAlign="center" marginSpacer="small">
       {!isSidePanel && (
