@@ -48,6 +48,10 @@ export async function editBasicProfile(formData: FormData) {
     typeof phone_number_raw === "string" && phone_number_raw !== ""
       ? phone_number_raw
       : existingData.phone_number;
+  const name =
+    given_name || family_name
+      ? `${given_name ? given_name + " " : ""}${family_name ? family_name : ""}`
+      : existingData.name;
   const data = {
     blocked: existingData.blocked,
     // email_verified: existingData.email_verified,
@@ -65,12 +69,7 @@ export async function editBasicProfile(formData: FormData) {
     connection: existingData.connection,
     client_id: existingData.client_id,
     username: existingData.username,
-    name:
-      given_name || family_name
-        ? `${given_name ? given_name + " " : ""}${
-            family_name ? family_name : ""
-          }`
-        : existingData.name,
+    name,
   };
   try {
     const response = await fetchFromAuth0Management(
@@ -100,11 +99,15 @@ export async function editBasicProfile(formData: FormData) {
         "Internal error: failed to fetch existing session, which is an unexpected error.",
     };
   }
-  await updateSession({ ...session, user: {
-    ...session.user,
-    family_name,
-    given_name,
-  }});
+  await updateSession({
+    ...session,
+    user: {
+      ...session.user,
+      family_name,
+      given_name,
+      name,
+    },
+  });
   redirect(
     `/api/auth/refresh-profile?upsert=true&returnTo=/profile?inTeams=${inTeams}`,
     RedirectType.push
