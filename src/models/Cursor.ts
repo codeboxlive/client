@@ -1,4 +1,4 @@
-import { IUser } from "./IUser";
+import { IFluidUser } from "./IUser";
 
 export interface ISelection {
   start: number;
@@ -91,7 +91,7 @@ export class Cursor implements ICursor {
     Functions
    */
 
-  public static fromUser(user: IUser): Cursor | undefined {
+  public static fromUser(user: IFluidUser): Cursor | undefined {
     if (!user.cursor) {
       return undefined;
     }

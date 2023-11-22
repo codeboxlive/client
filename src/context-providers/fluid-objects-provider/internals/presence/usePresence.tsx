@@ -7,7 +7,7 @@ import {
 } from "@microsoft/live-share";
 import { useStateRef } from "../../../../hooks";
 import * as microsoftTeams from "@microsoft/teams-js";
-import { IPresenceContext, IUser, ICursor } from "../../../../models";
+import { IPresenceContext, IFluidUser, ICursor } from "../../../../models";
 
 export const usePresence = (
   presence: LivePresence | undefined,
@@ -15,9 +15,9 @@ export const usePresence = (
   initialPageKey: string,
   followingUserId: string | undefined
 ): IPresenceContext => {
-  const [otherUsers, setOtherUsers] = useState<IUser[]>([]);
+  const [otherUsers, setOtherUsers] = useState<IFluidUser[]>([]);
   const [localUser, localUserRef, setLocalUser] = useStateRef<
-    IUser | undefined
+    IFluidUser | undefined
   >(undefined);
   const [started, setStarted] = useState(false);
 
@@ -99,7 +99,7 @@ export const usePresence = (
         // We update local user separately so that we can
         // get their Teams meeting role.
         const userData = userPresence.data as any;
-        const localUser: IUser = {
+        const localUser: IFluidUser = {
           userId: userPresence.userId,
           state: userPresence.state,
           name: userData?.name ? `${userData.name}` : "Unknown",
@@ -113,7 +113,7 @@ export const usePresence = (
         setLocalUser(localUser);
       } else {
         // Update our local state for our list of users
-        const updatedUsers: IUser[] = presence
+        const updatedUsers: IFluidUser[] = presence
           .getUsers(PresenceState.online)
           .map((userPresence) => {
             const userData = userPresence.data as any;

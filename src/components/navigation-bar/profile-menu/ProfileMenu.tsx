@@ -49,9 +49,7 @@ export const ProfileMenu: FC = () => {
             icon={<SignOut20Regular />}
             onClick={() => {
               router.push(
-                `/api/${
-                  IN_TEAMS ? "auth-teams" : "auth"
-                }/logout?returnTo=/?inTeams=${IN_TEAMS}`
+                `/api/auth/logout?inTeams=${IN_TEAMS}&returnTo=/`
               );
             }}
           >

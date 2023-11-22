@@ -1,4 +1,4 @@
-import { IOAuthCodeData, getTokenForCode } from "@/utils/oauth-utils";
+import { IOAuthCodeData, getTokenForCode } from "@/utils/auth-utils";
 import { NextResponse, NextRequest } from "next/server";
 import { msalClient } from "@/api/msal-client";
 

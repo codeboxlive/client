@@ -1,6 +1,6 @@
 "use server";
 import { NextResponse } from "next/server";
-import { getUserInfo } from "@/api";
+import { getPublicUserInfo } from "@/api";
 import { generateToken } from "@fluidframework/azure-service-utils";
 import { ScopeType } from "@fluidframework/azure-client";
 import { isGetFluidTokenBody } from "@/models";
@@ -14,7 +14,7 @@ export async function POST(req: Request) {
       "Invalid response type. Please ensure the body adheres to IGetFluidTokenBody interface"
     );
   }
-  const userInfo = await getUserInfo();
+  const userInfo = await getPublicUserInfo();
   const AZURE_FLUID_RELAY_KEY_WEST_US2 =
     process.env.AZURE_FLUID_RELAY_KEY_WEST_US2;
   if (!AZURE_FLUID_RELAY_KEY_WEST_US2) {

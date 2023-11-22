@@ -1,5 +1,5 @@
 import validateTeamsToken from "@/api/validateTeamsToken";
-import { getOAuthCode } from "@/utils/oauth-utils";
+import { getOAuthCode } from "@/utils/auth-utils";
 import { NextRequest, NextResponse } from "next/server";
 
 export const GET = async (req: NextRequest) => {

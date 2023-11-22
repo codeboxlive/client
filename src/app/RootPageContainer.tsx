@@ -69,10 +69,11 @@ export const RootPageContainer: FC<IRootPageProps> = ({ redirectTo }) => {
     ) => {
       setLoginActive(true);
       try {
-        const url = new URL(window.location.origin + "/api/auth-teams/" + path);
+        const url = new URL(window.location.origin + "/api/auth/" + path);
         if (connection) {
           url.searchParams.set("connection", connection);
         }
+        url.searchParams.set("returnTo", "/teams-auth-success?inTeams=true");
         await authentication.authenticate({
           url: url.href,
         });

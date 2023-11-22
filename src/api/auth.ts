@@ -1,44 +1,32 @@
 "use server";
 
+import { IPrivateUserInfo, IPublicUserInfo } from "@/models";
 import { RequiresAuthError } from "@/models/errors";
+import { sessionToIPrivateUserInfo } from "@/utils/auth-utils";
 import { getSession } from "@auth0/nextjs-auth0";
 
-export async function getUserInfo(): Promise<{
-  sub: string;
-  name: string;
-  family_name?: string;
-  given_name?: string;
-  picture?: string;
-}> {
+export async function getPrivateUserInfo(): Promise<IPrivateUserInfo> {
   const session = await getSession();
 
   if (!session) {
     throw new RequiresAuthError();
   }
 
-  const { user } = session;
+  return sessionToIPrivateUserInfo(session);
+}
 
-  if (typeof user.sub !== "string") {
-    throw new Error("auth.getUserInfo: invalid sub value");
-  }
-
-  const name = typeof user.name === "string" ? user.name : undefined;
-  const nickname =
-    typeof user.nickname === "string" ? user.nickname : undefined;
-  const email = typeof user.email === "string" ? user.email : undefined;
-
+export async function getPublicUserInfo(): Promise<IPublicUserInfo> {
+  const privateInfo = await getPrivateUserInfo();
   return {
-    sub: user.sub,
-    name: name ?? nickname ?? email ?? "Unknown",
-    family_name:
-      typeof user.family_name === "string" ? user.family_name : undefined,
-    given_name:
-      typeof user.given_name === "string" ? user.given_name : undefined,
-    picture: typeof user.picture === "string" ? user.picture : undefined,
+    sub: privateInfo.sub,
+    name: privateInfo.name,
+    family_name: privateInfo.family_name,
+    given_name: privateInfo.given_name,
+    picture: privateInfo.picture,
   };
 }
 
 export async function getUserId(): Promise<string> {
-  const user = await getUserInfo();
+  const user = await getPublicUserInfo();
   return user.sub;
 }

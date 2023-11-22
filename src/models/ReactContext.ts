@@ -2,7 +2,7 @@ import { LivePresence, LiveState } from "@microsoft/live-share";
 import { IFluidContainer, SharedMap, SharedString } from "fluid-framework";
 import { MutableRefObject } from "react";
 import { IFollowModeStateValue } from "./IFollowModeStateValue";
-import { IUser } from "./IUser";
+import { IFluidUser } from "./IUser";
 import { app } from "@microsoft/teams-js";
 import { SandpackFiles } from "@codesandbox/sandpack-react";
 import { ICursor } from "./Cursor";
@@ -50,11 +50,11 @@ export interface IFollowModeStateContext {
 
 export interface IPresenceContext {
   presenceStarted: boolean;
-  localUser: IUser | undefined;
-  localUserRef: MutableRefObject<IUser | undefined>;
+  localUser: IFluidUser | undefined;
+  localUserRef: MutableRefObject<IFluidUser | undefined>;
   localUserIsEligiblePresenter: boolean;
-  users: IUser[];
-  otherUsers: IUser[];
+  users: IFluidUser[];
+  otherUsers: IFluidUser[];
   currentPageKey: string | undefined;
   onChangeCurrentPageKey: (currentPageKey: string | undefined) => void;
   onChangeCursor: (cursor: ICursor) => void;

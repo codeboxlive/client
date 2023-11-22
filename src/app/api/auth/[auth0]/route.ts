@@ -1,36 +1,73 @@
+import { upsertUser } from "@/api/upsertUser";
 import {
   AfterRefetch,
-  Session,
+  AfterCallbackAppRoute,
   getSession,
   handleAuth,
   handleLogin,
   handleLogout,
   handleProfile,
+  handleCallback,
 } from "@auth0/nextjs-auth0";
 import { NextApiRequest, NextApiResponse } from "next";
-import { NextRequest, NextResponse } from "next/server";
+import { NextResponse } from "next/server";
 
 // Updating with the new session from the server
 const afterRefetch: AfterRefetch = (req, res, session) => {
-  const newSession = getSession(req, res);
+  const newSession = getSession(req, res).then(async (session) => {
+    if (!session) {
+      throw new Error("Invalid session");
+    }
+    await upsertUser(session);
+    return session;
+  });
   if (newSession) {
-    return newSession as Promise<Session>;
+    return newSession;
   }
   return session;
 };
 
-export const GET = handleAuth({
-  login: handleLogin({
+const internalHandleLogin = async (
+  req: NextApiRequest,
+  res: NextApiResponse,
+  screen_hint?: string
+) => {
+  let url = new URL(req.url!);
+  return handleLogin(req, res, {
+    // This will get overwrote by handleLogin if ?returnTo is set
     returnTo: "/projects",
-  }),
-  signup: handleLogin({
     authorizationParams: {
-      screen_hint: "signup",
+      screen_hint,
+      connection: url.searchParams.get("connection") ?? undefined,
     },
-    returnTo: "/projects",
-  }),
-  logout: handleLogout({
-    returnTo: "/",
+  });
+};
+
+const afterCallback: AfterCallbackAppRoute = async (req, session, state) => {
+  console.log(JSON.stringify(state));
+  await upsertUser(session);
+  return session;
+};
+
+export const GET = handleAuth({
+  login: (req: NextApiRequest, res: NextApiResponse) => {
+    return internalHandleLogin(req, res);
+  },
+  signup: (req: NextApiRequest, res: NextApiResponse) => {
+    return internalHandleLogin(req, res, "signup");
+  },
+  logout: (req: NextApiRequest, res: NextApiResponse) => {
+    let url = new URL(req.url!);
+    const inTeams = url.searchParams.get("inTeams") === "true";
+    const returnTo = `${
+      url.searchParams.get("returnTo") ?? "/"
+    }?inTeams=${inTeams}`;
+    return handleLogout(req, res, {
+      returnTo,
+    });
+  },
+  callback: handleCallback({
+    afterCallback,
   }),
   "refresh-profile": async (req: NextApiRequest, res: NextApiResponse) => {
     try {

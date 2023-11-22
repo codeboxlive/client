@@ -2,6 +2,7 @@
 
 import { getUserId } from "@/api";
 import { fetchFromAuth0Management } from "@/api/auth0-management";
+import { isAuth0Error } from "@/utils/auth-utils";
 import { getSession, updateSession } from "@auth0/nextjs-auth0";
 import { RedirectType, redirect } from "next/navigation";
 
@@ -105,21 +106,7 @@ export async function editBasicProfile(formData: FormData) {
     given_name,
   }});
   redirect(
-    `/api/${
-      inTeams ? "auth-teams" : "auth"
-    }/refresh-profile?returnTo=/profile?inTeams=${inTeams}`,
+    `/api/auth/refresh-profile?returnTo=/profile?inTeams=${inTeams}`,
     RedirectType.push
-  );
-}
-
-function isAuth0Error(value: any): value is {
-  statusCode: number;
-  error: string;
-  message: string;
-} {
-  return (
-    typeof value?.statusCode === "number" &&
-    typeof value?.error === "string" &&
-    typeof value?.message === "string"
   );
 }
