@@ -100,7 +100,10 @@ export const POST = async (req: NextRequest) => {
     );
   }
   if (redirectUrl.origin !== process.env.AUTH0_ISSUER_BASE_URL) {
-    console.error("m365-tab/token: invalid redirect_uri origin", redirectUrl.origin);
+    console.error(
+      "m365-tab/token: invalid redirect_uri origin",
+      redirectUrl.origin
+    );
     return NextResponse.json(
       {
         error: "Invalid redirect_uri origin.",
@@ -120,7 +123,10 @@ export const POST = async (req: NextRequest) => {
       { status: 401 }
     );
   }
-  const scopes = ["https://graph.microsoft.com/User.Read"];
+  const scopes = [
+    "https://graph.microsoft.com/profile",
+    "https://graph.microsoft.com/openid",
+  ];
   try {
     console.log("m365-tab/token: starting to get obo tokens");
     const results = await msalClient.acquireTokenOnBehalfOf({
