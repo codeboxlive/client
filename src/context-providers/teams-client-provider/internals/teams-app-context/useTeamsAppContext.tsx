@@ -88,6 +88,7 @@ export const useTeamsAppContext = (
             id: userId,
             userPrincipalName: "smile@ryanbliss.me"
           },
+          dialogParameters: {}
         });
       }
     }
