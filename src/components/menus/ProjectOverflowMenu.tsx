@@ -23,7 +23,7 @@ import {
   useTeamsClientContext,
 } from "@/context-providers";
 import { IProject } from "../../models";
-import { inTeams, openInStageView } from "../../utils";
+import { inTeams, openInStageView, openInTaskModule } from "../../utils";
 import { useRouter } from "next/navigation";
 import { EditProjectDialog } from "../create-project/EditProjectDialog";
 
@@ -62,6 +62,14 @@ export const ProjectOverflowMenu: FC<IProjectOverflowMenuProps> = ({
   const onOpenStageView = useCallback(async () => {
     try {
       await openInStageView(project, teamsContext);
+    } catch (error: any) {
+      console.error(error);
+    }
+  }, [project, teamsContext]);
+
+  const onOpenInTaskModule = useCallback(async () => {
+    try {
+      await openInTaskModule(project, teamsContext);
     } catch (error: any) {
       console.error(error);
     }
@@ -112,6 +120,9 @@ export const ProjectOverflowMenu: FC<IProjectOverflowMenuProps> = ({
             )}
             <MenuItem icon={<Open20Regular />} onClick={onOpenStageView}>
               {"Open in pop out"}
+            </MenuItem>
+            <MenuItem icon={<Open20Regular />} onClick={onOpenInTaskModule}>
+              {"Open in task module"}
             </MenuItem>
             <MenuItem icon={<Edit20Regular />} onClick={() => {
               setEditDialogOpen(true);
