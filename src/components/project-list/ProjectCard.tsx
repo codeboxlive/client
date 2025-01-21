@@ -93,6 +93,8 @@ export const ProjectCard: FC<IProjectCardProps> = ({ project, pinned }) => {
           appearance="subtle"
           size="medium"
           onClick={onSelectProject}
+          role="button"
+          tabIndex={0}
           style={{
             color: tokens.colorBrandForeground1,
           }}
